@@ -1,5 +1,4 @@
 [
-    
     {
         "type": "appOfTheDay",
         "backgroundType": {
@@ -64,6 +63,177 @@
         "title": "Help Victor light the last campfire",
         "subtitle": "APPLE ARCADE",
         "imageName": "ghost",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "light", "light"],
+            "bottom": "light"
+        },
+        "largeTitle": "GAME\nOF THE\nDAY",
+        "appName": "South of the Circle",
+        "appIconName": "south-of-the-circle-icon",
+        "message": "Love. Memory. Survival.",
+        "imageName": "south-of-the-circle",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "largeTitle": "GAME\nOF THE\nYEAR",
+        "appName": "Monument Valley",
+        "appIconName": "monument-valley-icon",
+        "message": "A Quest for Forgiveness",
+        "imageName": "monument-valley",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "highlight",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "appName": "Sky: Children of the Light",
+        "message": "Fly with Friends",
+        "title": "Return fallen Stars to their constellations",
+        "subtitle": "BEST OF THE MONTH",
+        "imageName": "sky",
+        "shortDescription": "Welcome to the world of Sky, a kingdom waiting to be explored.",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "highlight",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "appName": "Journey",
+        "title": "Glide Across sands to dicsover its secrets",
+        "subtitle": "NEW GAME",
+        "imageName": "journey",
+        "shortDescription": "Featuring stunning visuals and Grammy-nominated musical score.",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "light", "light"],
+            "bottom": "light"
+        },
+        "largeTitle": "GAME\nOF THE\nDAY",
+        "appName": "South of the Circle",
+        "appIconName": "south-of-the-circle-icon",
+        "message": "Love. Memory. Survival.",
+        "imageName": "south-of-the-circle",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "explore",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "appName": "Apple Arcade",
+        "message": "100+ Extraordinary Games",
+        "title": "Help Victor light the last campfire",
+        "subtitle": "APPLE ARCADE",
+        "imageName": "ghost",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "light", "light"],
+            "bottom": "light"
+        },
+        "largeTitle": "GAME\nOF THE\nDAY",
+        "appName": "South of the Circle",
+        "appIconName": "south-of-the-circle-icon",
+        "message": "Love. Memory. Survival.",
+        "imageName": "south-of-the-circle",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "largeTitle": "GAME\nOF THE\nYEAR",
+        "appName": "Monument Valley",
+        "appIconName": "monument-valley-icon",
+        "message": "A Quest for Forgiveness",
+        "imageName": "monument-valley",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "highlight",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "appName": "Sky: Children of the Light",
+        "message": "Fly with Friends",
+        "title": "Return fallen Stars to their constellations",
+        "subtitle": "BEST OF THE MONTH",
+        "imageName": "sky",
+        "shortDescription": "Welcome to the world of Sky, a kingdom waiting to be explored.",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "highlight",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "appName": "Journey",
+        "title": "Glide Across sands to dicsover its secrets",
+        "subtitle": "NEW GAME",
+        "imageName": "journey",
+        "shortDescription": "Featuring stunning visuals and Grammy-nominated musical score.",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "light", "light"],
+            "bottom": "light"
+        },
+        "largeTitle": "GAME\nOF THE\nDAY",
+        "appName": "South of the Circle",
+        "appIconName": "south-of-the-circle-icon",
+        "message": "Love. Memory. Survival.",
+        "imageName": "south-of-the-circle",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "explore",
+        "backgroundType": {
+            "top": [ "dark", "dark"],
+            "bottom": "dark"
+        },
+        "appName": "Apple Arcade",
+        "message": "100+ Extraordinary Games",
+        "title": "Help Victor light the last campfire",
+        "subtitle": "APPLE ARCADE",
+        "imageName": "ghost",
+        "longDescription": "VICTOR",
+    },
+    {
+        "type": "appOfTheDay",
+        "backgroundType": {
+            "top": [ "light", "light"],
+            "bottom": "light"
+        },
+        "largeTitle": "GAME\nOF THE\nDAY",
+        "appName": "South of the Circle",
+        "appIconName": "south-of-the-circle-icon",
+        "message": "Love. Memory. Survival.",
+        "imageName": "south-of-the-circle",
         "longDescription": "VICTOR",
     }
 ]

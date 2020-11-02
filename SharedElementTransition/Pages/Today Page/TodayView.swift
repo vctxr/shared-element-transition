@@ -39,7 +39,7 @@ class TodayView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         if statusBarBlurView.superview != self {
-            configureStatusBarBlurViewIfNeeded()
+            configureStatusBarBlurView()
         }
     }
     
@@ -64,16 +64,14 @@ extension TodayView {
         ])
     }
     
-    private func configureStatusBarBlurViewIfNeeded() {
-        if UIDevice.current.hasNotch {
-            addSubview(statusBarBlurView)
-            
-            NSLayoutConstraint.activate([
-                statusBarBlurView.topAnchor.constraint(equalTo: topAnchor),
-                statusBarBlurView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                statusBarBlurView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                statusBarBlurView.heightAnchor.constraint(equalToConstant: UIDevice.current.safeAreaTopHeight)
-            ])
-        }
+    private func configureStatusBarBlurView() {
+        addSubview(statusBarBlurView)
+        
+        NSLayoutConstraint.activate([
+            statusBarBlurView.topAnchor.constraint(equalTo: topAnchor),
+            statusBarBlurView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            statusBarBlurView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            statusBarBlurView.heightAnchor.constraint(equalToConstant: UIDevice.current.safeAreaTopHeight)
+        ])
     }
 }

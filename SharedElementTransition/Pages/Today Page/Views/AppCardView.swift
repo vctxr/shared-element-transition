@@ -1,0 +1,381 @@
+//
+//  AppCardView.swift
+//  SharedElementTransition
+//
+//  Created by Victor Samuel Cuaca on 02/11/20.
+//
+
+import UIKit
+
+enum AppCardState {
+    case card
+    case full
+}
+
+class AppCardView: UIView {
+    
+    let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    lazy private var shadowView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 1
+        view.layer.shadowRadius = 10
+        view.layer.shadowOffset = CGSize(width: 0, height: 12)
+        return view
+    }()
+    
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    
+    // MARK: - Title and Subtitle
+    lazy private var subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline).with(weight: .semibold)
+        label.applyDynamicType()
+        return label
+    }()
+    
+    lazy private var titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .title1).with(weight: .bold)
+        label.numberOfLines = 0
+        label.applyDynamicType()
+        return label
+    }()
+    
+    lazy private var titleStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 6
+        return stackView
+    }()
+    
+    
+    // MARK: - Description
+    lazy private var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.numberOfLines = 0
+        label.applyDynamicType()
+        return label
+    }()
+    
+    
+    // MARK: - App of The Day
+    lazy private var appOfTheDayLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 45, weight: .black)
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    
+    // MARK: - Bottom CTA
+    lazy private var blurEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        return blurView
+    }()
+    
+    lazy private var appIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    lazy private var appNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .headline).with(weight: .medium)
+        label.numberOfLines = 0
+        label.applyDynamicType()
+        return label
+    }()
+    
+    lazy private var messageLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.applyDynamicType()
+        return label
+    }()
+    
+    lazy private var verticalStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 1
+        return stackView
+    }()
+    
+    lazy private var horizontalStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 16
+        stackView.alignment = .center
+        return stackView
+    }()
+    
+    lazy private var ctaButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        button.layer.cornerRadius = 14
+        return button
+    }()
+    
+    
+    // MARK: - Layout Constraints
+    var topTitleConstraint: NSLayoutConstraint?
+    var leadingConstraint: NSLayoutConstraint?
+    var trailingConstraint: NSLayoutConstraint?
+
+    private var appCardState: AppCardState = .card
+    
+    var appCard: AppCard! {
+        didSet {
+            configureSubviews(with: appCard)
+        }
+    }
+    
+    // MARK: - Inits
+    init(appCard: AppCard, appCardState: AppCardState) {
+        self.appCard = appCard
+        self.appCardState = appCardState
+        super.init(frame: .zero)
+        configureSubviews(with: appCard)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        shadowView.layer.shadowPath = UIBezierPath(roundedRect: containerView.bounds.insetBy(dx: 5, dy: 0), cornerRadius: containerView.layer.cornerRadius).cgPath
+    }
+    
+    
+    // MARK: - Functions
+    func updateLayout(for appCardState: AppCardState) {
+        self.appCardState = appCardState
+        
+        switch appCardState {
+        case .card:
+            topTitleConstraint?.constant = 16
+            leadingConstraint?.constant = 20
+            trailingConstraint?.constant = -20
+            
+            showShadow()
+        case .full:
+            topTitleConstraint?.constant = max(24, UIDevice.current.safeAreaTopHeight)
+            leadingConstraint?.constant = 0
+            trailingConstraint?.constant = 0
+            
+            hideShadow()
+        }
+    }
+    
+    func showShadow() {
+        shadowView.layer.shadowColor = UIColor.black.cgColor
+        shadowView.layer.shadowOpacity = 0.2
+        shadowView.layer.shadowRadius = 10
+        shadowView.layer.shadowOffset = CGSize(width: 0, height: 12)
+    }
+    
+    func hideShadow() {
+        shadowView.layer.shadowColor = UIColor.clear.cgColor
+        shadowView.layer.shadowOpacity = 0
+        shadowView.layer.shadowRadius = 0
+        shadowView.layer.shadowOffset = CGSize(width: 0, height: 0)
+    }
+    
+    func configureContainer(for state: AppCardState) {
+        updateLayout(for: state)
+        
+        switch state {
+        case .card:
+            containerView.layer.cornerRadius = 10
+        case .full:
+            containerView.layer.cornerRadius = 0
+        }
+    }
+    
+    private func removeViews(views: [UIView]) {
+        views.forEach({ $0.removeFromSuperview() })
+    }
+}
+
+extension AppCardView {
+    
+    private func configureSubviews(with appCard: AppCard) {
+        addSubview(shadowView)
+        addSubview(containerView)
+        
+        backgroundImageView.image = UIImage(named: appCard.imageName)
+        containerView.addSubview(backgroundImageView)
+        
+        leadingConstraint = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20)
+        trailingConstraint = containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+                
+        NSLayoutConstraint.activate([
+            shadowView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            shadowView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            shadowView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            shadowView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            
+            containerView.topAnchor.constraint(equalTo: topAnchor),
+            leadingConstraint!,
+            trailingConstraint!,
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            backgroundImageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+        
+        updateLayout(for: appCardState)
+        
+        switch appCard.type {
+        case .appOfTheDay:
+            removeViews(views: [titleStackView, descriptionLabel])
+            configureBottomCTA(with: appCard)
+            configureAppOfTheDay(with: appCard)
+        case .highlight:
+            removeViews(views: [appOfTheDayLabel, blurEffectView])
+            configureTitleAndSubtitle(with: appCard)
+            configureDescription(with: appCard)
+        case .explore:
+            removeViews(views: [appOfTheDayLabel, appIconImageView])
+            configureTitleAndSubtitle(with: appCard)
+            configureBottomCTA(with: appCard)
+        }
+    }
+    
+    private func configureAppOfTheDay(with appCard: AppCard) {
+        containerView.addSubview(appOfTheDayLabel)
+        
+        NSLayoutConstraint.activate([
+            appOfTheDayLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            appOfTheDayLabel.trailingAnchor.constraint(lessThanOrEqualTo: containerView.trailingAnchor, constant: -20),
+            appOfTheDayLabel.bottomAnchor.constraint(equalTo: horizontalStackView.topAnchor, constant: -20),
+            appOfTheDayLabel.heightAnchor.constraint(equalToConstant: 130)
+        ])
+        
+        appOfTheDayLabel.text = appCard.largeTitle
+        appOfTheDayLabel.setLineSpacing(lineHeightMultiple: 0.75)
+        
+        appOfTheDayLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
+    }
+    
+    private func configureBottomCTA(with appCard: AppCard) {
+        verticalStackView.addArrangedSubview(appNameLabel)
+        verticalStackView.addArrangedSubview(messageLabel)
+        
+        if let appIconImageName = appCard.appIconName {
+            horizontalStackView.addArrangedSubview(appIconImageView)
+            appIconImageView.image = UIImage(named: appIconImageName)
+            
+            NSLayoutConstraint.activate([
+                appIconImageView.widthAnchor.constraint(equalToConstant: 50),
+                appIconImageView.heightAnchor.constraint(equalTo: appIconImageView.widthAnchor)
+            ])
+        }
+        
+        horizontalStackView.addArrangedSubview(verticalStackView)
+        
+        blurEffectView.contentView.addSubview(horizontalStackView)
+        blurEffectView.contentView.addSubview(ctaButton)
+        containerView.addSubview(blurEffectView)
+        
+        NSLayoutConstraint.activate([
+            blurEffectView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            blurEffectView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            blurEffectView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            
+            horizontalStackView.topAnchor.constraint(equalTo: blurEffectView.contentView.topAnchor, constant: 16),
+            horizontalStackView.leadingAnchor.constraint(equalTo: blurEffectView.contentView.leadingAnchor, constant: 20),
+            horizontalStackView.trailingAnchor.constraint(lessThanOrEqualTo: ctaButton.leadingAnchor, constant: -20),
+            horizontalStackView.bottomAnchor.constraint(equalTo: blurEffectView.contentView.bottomAnchor, constant: -16),
+            
+            ctaButton.heightAnchor.constraint(equalToConstant: 28),
+            ctaButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 70),
+            ctaButton.centerYAnchor.constraint(equalTo: blurEffectView.contentView.centerYAnchor),
+            ctaButton.trailingAnchor.constraint(equalTo: blurEffectView.contentView.trailingAnchor, constant: -20),
+            
+        ])
+        
+        appNameLabel.text = appCard.appName
+        messageLabel.text = appCard.message
+        
+        if appCard.type == .explore {
+            ctaButton.setTitle("EXPLORE", for: .normal)
+        } else {
+            ctaButton.setTitle("GET", for: .normal)
+        }
+        
+        appNameLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
+        messageLabel.textColor = appCard.backgroundType.bottom == .light ? .gray : .white
+        ctaButton.backgroundColor = appCard.backgroundType.bottom == .light ? .systemGray5 : .white
+    }
+    
+    private func configureTitleAndSubtitle(with appCard: AppCard) {
+        containerView.addSubview(titleStackView)
+        titleStackView.addArrangedSubview(subtitleLabel)
+        titleStackView.addArrangedSubview(titleLabel)
+        
+        topTitleConstraint = titleStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16)
+        NSLayoutConstraint.activate([
+            topTitleConstraint!,
+            titleStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            titleStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+        ])
+        
+        subtitleLabel.text = appCard.subtitle
+        titleLabel.text = appCard.title
+        
+        subtitleLabel.textColor = appCard.backgroundType.top[0] == .light ? .gray : .lightText
+        titleLabel.textColor = appCard.backgroundType.top[1] == .light ? .black : .white
+    }
+    
+    private func configureDescription(with appCard: AppCard) {
+        containerView.addSubview(descriptionLabel)
+        
+        NSLayoutConstraint.activate([
+            descriptionLabel.leadingAnchor.constraint(equalTo: titleStackView.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            descriptionLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16)
+        ])
+        
+        descriptionLabel.text = appCard.shortDescription
+        descriptionLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
+    }
+}

@@ -33,13 +33,16 @@ class TodayHeaderCollectionReusableView: UICollectionReusableView {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .secondarySystemFill
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 20
+        imageView.clipsToBounds = true
         return imageView
     }()
     
     private let horizontalStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.alignment = .bottom
         return stackView
     }()
     
@@ -47,7 +50,7 @@ class TodayHeaderCollectionReusableView: UICollectionReusableView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = 5
         return stackView
     }()
     
@@ -64,8 +67,9 @@ class TodayHeaderCollectionReusableView: UICollectionReusableView {
     
     
     // MARK: - Functions
-    func configure(with dateString: String) {
+    func configure(with dateString: String, profileImage: UIImage?) {
         dateLabel.text = dateString
+        profileImageView.image = profileImage
     }
 }
 
@@ -83,7 +87,7 @@ extension TodayHeaderCollectionReusableView {
         addSubview(verticalStackView)
         
         NSLayoutConstraint.activate([
-            profileImageView.widthAnchor.constraint(equalToConstant: 32),
+            profileImageView.widthAnchor.constraint(equalToConstant: 40),
             profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor),
 
             verticalStackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),

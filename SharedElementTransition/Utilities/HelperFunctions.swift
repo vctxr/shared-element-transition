@@ -5,7 +5,7 @@
 //  Created by Victor Samuel Cuaca on 01/11/20.
 //
 
-import Foundation
+import UIKit
 
 /// Fetches all data of the given type from the local JSON file and return an array of object of the specified type.
 func fetchFromJSON<T: Decodable>(ofType: T.Type, fileName: String) -> [T] {

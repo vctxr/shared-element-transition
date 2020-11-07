@@ -34,7 +34,7 @@ class SharedElementTransitionManager: NSObject {
     
     private lazy var expandingBottomBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .red
+        view.layer.masksToBounds = true
         return view
     }()
     
@@ -78,6 +78,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         guard let tabBarController = (transition == .present) ? (fromVC as? UITabBarController) : (toVC as? UITabBarController),
               let todayVC = tabBarController.selectedViewController as? TodayVC,
               let detailVC = (transition == .present) ? (toVC as? DetailVC) : (fromVC as? DetailVC),
+              let textLabelCopy = detailVC.detailView.textLabel.createCopy() as? UILabel,
               let appCardView = todayVC.getSelectedAppCardView(),
               let appCard = appCardView.appCard,
               let tabBarCopy = tabBarController.tabBar.createCopy() as? UITabBar,
@@ -96,7 +97,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         containerView.addSubview(appCardViewCopy)
          
         // Initial expanding bottom background view setup. If dismiss, inset top frame by app card view height to hide the background view sticking up at the top of the app card while dismissing
-        expandingBottomBackgroundView.frame = (transition == .present) ? appCardViewCopy.containerView.frame : containerView.frame.inset(by: UIEdgeInsets(top: appCardViewCopy.frame.height, left: 0, bottom: 0, right: 0))
+        expandingBottomBackgroundView.frame = (transition == .present) ? appCardViewCopy.containerView.frame : containerView.frame
         expandingBottomBackgroundView.layer.cornerRadius = transition.cornerRadius
         expandingBottomBackgroundView.backgroundColor = .systemBackground
         appCardViewCopy.insertSubview(expandingBottomBackgroundView, aboveSubview: appCardViewCopy.shadowView)
@@ -105,6 +106,16 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         let hiddenTabBarFrame = originalTabBarFrame.offsetBy(dx: 0, dy: 100)
         tabBarCopy.frame = (transition == .present) ? originalTabBarFrame : hiddenTabBarFrame
         containerView.addSubview(tabBarCopy)
+        containerView.layoutIfNeeded()
+        
+        // Lay out text label
+        textLabelCopy.translatesAutoresizingMaskIntoConstraints = false
+        expandingBottomBackgroundView.addSubview(textLabelCopy)
+        NSLayoutConstraint.activate([
+            textLabelCopy.topAnchor.constraint(equalTo: appCardViewCopy.bottomAnchor, constant: 40),
+            textLabelCopy.leadingAnchor.constraint(equalTo: appCardViewCopy.leadingAnchor, constant: 20),
+            textLabelCopy.trailingAnchor.constraint(equalTo: appCardViewCopy.trailingAnchor, constant: -20)
+        ])
         containerView.layoutIfNeeded()
         
         // Hide original app card view and original tab bar. Hide tab bar using opacity because issue with collectionview bottom inset ignoring tab bar when it is hidden
@@ -121,6 +132,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
                 tabBarController.tabBar.layer.opacity = 1
 
                 appCardViewCopy.removeFromSuperview()
+                textLabelCopy.removeFromSuperview()
                 self.expandingBottomBackgroundView.removeFromSuperview()
                 
                 transitionContext.completeTransition(true)
@@ -131,6 +143,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
                 tabBarController.tabBar.layer.opacity = 1
 
                 appCardViewCopy.removeFromSuperview()
+                textLabelCopy.removeFromSuperview()
                 self.expandingBottomBackgroundView.removeFromSuperview()
                 
                 transitionContext.completeTransition(true)
@@ -173,7 +186,7 @@ extension SharedElementTransitionManager {
             appCardView.updateLayout(for: self.transition.appCardState)
         }
         
-        let nonSpringAnimator = UIViewPropertyAnimator(duration: EXPAND_CONTRACT_DURATION, dampingRatio: 1) {
+        let nonSpringAnimator = UIViewPropertyAnimator(duration: EXPAND_CONTRACT_DURATION * 0.8, dampingRatio: 1) {
             // Set app card view copy target height
             appCardView.transform = .identity
             appCardView.frame = CGRect(x: appCardView.frame.origin.x, y: yOriginAppCard, width: appCardView.frame.width, height: self.transition.appCardHeight)
@@ -229,7 +242,7 @@ extension SharedElementTransitionManager {
         var cornerRadius: CGFloat { return self == .present ? Constants.APP_CARD_CORNER_RADIUS : 0 }
         var appCardState: AppCardState { return self == .present ? .expanded : .card }
         var appCardHeight: CGFloat { return self == .present ? Constants.APP_CARD_EXPANDED_HEIGHT : Constants.APP_CARD_HEIGHT }
-        var expandingBottomBackgroundViewColor: UIColor { return self == .present ? .systemBackground : .clear }
+        var expandingBottomBackgroundViewColor: UIColor { return self == .present ? .secondarySystemGroupedBackground : .clear }
         var next: TransitionType { return self == .present ? .dismiss : .present }
     }
 }

@@ -9,14 +9,14 @@ import UIKit
 
 class TodayView: UIView {
     
-    lazy var statusBarBlurView: UIVisualEffectView = {
+    let statusBarBlurView: UIVisualEffectView = {
         let blur = UIBlurEffect(style: .regular)
         let blurView = UIVisualEffectView(effect: blur)
         blurView.translatesAutoresizingMaskIntoConstraints = false
         return blurView
     }()
     
-    lazy var collectionView: UICollectionView = {
+    let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 35
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)

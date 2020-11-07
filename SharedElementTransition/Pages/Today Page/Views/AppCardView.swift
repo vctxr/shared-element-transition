@@ -202,12 +202,16 @@ class AppCardView: UIView {
             leadingConstraint?.constant = 20
             trailingConstraint?.constant = -20
             
+            containerView.layer.cornerRadius = Constants.APP_CARD_CORNER_RADIUS
+            
             shadowView.showAllShadows(opacity: Constants.APP_CARD_SHADOW_OPACITY, radius: Constants.APP_CARD_SHADOW_RADIUS, offset: Constants.APP_CARD_SHADOW_OFFSET)
         case .expanded:
             topTitleConstraint?.constant = UIDevice.current.safeAreaTopHeight
             leadingConstraint?.constant = 0
             trailingConstraint?.constant = 0
             
+            containerView.layer.cornerRadius = 0
+
             shadowView.hideAllShadows()
         }
     }

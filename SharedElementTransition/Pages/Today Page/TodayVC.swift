@@ -25,7 +25,11 @@ class TodayVC: UIViewController {
     lazy var originalTabBarFrame: CGRect? = {
         return tabBar?.frame
     }()
-        
+    
+    lazy var safeAreaTop: CGFloat = {
+        return UIDevice.current.safeAreaTopHeight
+    }()
+            
     private let sharedElementTransitionManager = SharedElementTransitionManager()
     private let appCards: [AppCard] = AppCard.getAppCards()
     
@@ -69,7 +73,6 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TodayHeaderCollectionReusableView.identifier, for: IndexPath(item: 0, section: 0)) as! TodayHeaderCollectionReusableView
         let headerViewHeight = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-        
         return CGSize(width: collectionView.frame.width, height: headerViewHeight)
     }
     
@@ -81,6 +84,18 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
         headerView.configure(with: dateString, profileImage: profileImage)
         
         return headerView
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let yOffset = scrollView.contentOffset.y
+        
+        // The initial top y offset is safe area top inset
+        if yOffset <= -safeAreaTop + 10  {
+            let opacity = 1 + ((yOffset + (safeAreaTop - 10)) / 10 ) * 1
+            todayView.statusBarBlurView.layer.opacity = Float(opacity)
+        } else {
+            todayView.statusBarBlurView.layer.opacity = 1
+        }
     }
 }
 

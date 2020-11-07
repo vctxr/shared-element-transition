@@ -25,7 +25,7 @@ class TodayVC: UIViewController {
     lazy var originalTabBarFrame: CGRect? = {
         return tabBar?.frame
     }()
-    
+        
     private let sharedElementTransitionManager = SharedElementTransitionManager()
     private let appCards: [AppCard] = AppCard.getAppCards()
     
@@ -37,9 +37,9 @@ class TodayVC: UIViewController {
     
     // MARK: - Functions
     func getSelectedAppCardView() -> AppCardView? {
-        guard let selectedIndexPath = todayView.collectionView.indexPathsForSelectedItems else { return nil }
+        guard let selectedIndexPath = todayView.collectionView.indexPathsForSelectedItems?.first else { return nil }
         
-        let cell = todayView.collectionView.cellForItem(at: selectedIndexPath[0]) as! AppCardCollectionCell
+        let cell = todayView.collectionView.cellForItem(at: selectedIndexPath) as! AppCardCollectionCell
         return cell.appCardView
     }
 }
@@ -56,12 +56,14 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
         let appCard = appCards[indexPath.row]
         
         cell.appCardView.appCard = appCard
+        cell.appCardView.indexPath = indexPath
+        cell.appCardView.delegate = self
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 450)
+        return CGSize(width: view.frame.width, height: Constants.APP_CARD_HEIGHT)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -80,10 +82,15 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
         
         return headerView
     }
+}
+
+// MARK: - AppCardView Delegate
+extension TodayVC: AppCardViewDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedAppCard = appCards[indexPath.row]
-        let detailVC = DetailVC(appCard: selectedAppCard)
+    func didTapAppCardView(with appCard: AppCard, at indexPath: IndexPath) {
+        todayView.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: UICollectionView.ScrollPosition(rawValue: 0))
+        
+        let detailVC = DetailVC(appCard: appCard)
         detailVC.transitioningDelegate = sharedElementTransitionManager
         detailVC.modalPresentationStyle = .overCurrentContext
         present(detailVC, animated: true, completion: nil)

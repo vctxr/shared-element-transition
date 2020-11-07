@@ -7,9 +7,13 @@
 
 import UIKit
 
+protocol AppCardViewDelegate: AnyObject {
+    func didTapAppCardView(with appCard: AppCard, at indexPath: IndexPath)
+}
+
 enum AppCardState {
     case card
-    case full
+    case expanded
 }
 
 class AppCardView: UIView {
@@ -35,8 +39,7 @@ class AppCardView: UIView {
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-//        imageView.clipsToBounds = true
+        imageView.contentMode = .center
         return imageView
     }()
     
@@ -142,6 +145,8 @@ class AppCardView: UIView {
         button.layer.cornerRadius = 14
         return button
     }()
+        
+    weak var delegate: AppCardViewDelegate?
     
     // MARK: - Layout Constraints
     var topTitleConstraint: NSLayoutConstraint?
@@ -149,6 +154,9 @@ class AppCardView: UIView {
     var trailingConstraint: NSLayoutConstraint?
 
     private var appCardState: AppCardState = .card
+    
+    var isTapGestureAdded: Bool = false
+    var indexPath: IndexPath?
     
     var appCard: AppCard! {
         didSet {
@@ -162,7 +170,6 @@ class AppCardView: UIView {
         self.appCardState = appCardState
         
         super.init(frame: .zero)
-        
         configureSubviews(with: appCard)
     }
     
@@ -179,6 +186,12 @@ class AppCardView: UIView {
         shadowView.layer.shadowPath = UIBezierPath(roundedRect: containerView.bounds.insetBy(dx: 5, dy: 0), cornerRadius: containerView.layer.cornerRadius).cgPath
     }
     
+    // MARK: - Handlers
+    @objc private func didTapAppCardViewContainer() {
+        guard let indexPath = indexPath else { return }
+        delegate?.didTapAppCardView(with: appCard, at: indexPath)
+    }
+    
     // MARK: - Functions
     func updateLayout(for appCardState: AppCardState) {
         self.appCardState = appCardState
@@ -190,12 +203,19 @@ class AppCardView: UIView {
             trailingConstraint?.constant = -20
             
             shadowView.showAllShadows(opacity: Constants.APP_CARD_SHADOW_OPACITY, radius: Constants.APP_CARD_SHADOW_RADIUS, offset: Constants.APP_CARD_SHADOW_OFFSET)
-        case .full:
+        case .expanded:
             topTitleConstraint?.constant = UIDevice.current.safeAreaTopHeight
             leadingConstraint?.constant = 0
             trailingConstraint?.constant = 0
             
             shadowView.hideAllShadows()
+        }
+    }
+    
+    private func addTapGestureToContainerViewIfNeeded() {
+        if !isTapGestureAdded {
+            containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapAppCardViewContainer)))
+            isTapGestureAdded = true
         }
     }
 }
@@ -204,6 +224,8 @@ class AppCardView: UIView {
 extension AppCardView {
     
     private func configureSubviews(with appCard: AppCard) {
+        addTapGestureToContainerViewIfNeeded()
+        
         addSubview(shadowView)
         addSubview(containerView)
         

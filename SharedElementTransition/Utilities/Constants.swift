@@ -9,6 +9,9 @@ import UIKit
 
 /// A struct that contains all app constants value.
 struct Constants {
+    static let APP_CARD_HEIGHT: CGFloat = 450
+    static let APP_CARD_EXPANDED_HEIGHT: CGFloat = 550
+    
     static let APP_CARD_CORNER_RADIUS: CGFloat = 10
     static let APP_CARD_SHADOW_OPACITY: Float = 0.15
     static let APP_CARD_SHADOW_RADIUS: CGFloat = 10

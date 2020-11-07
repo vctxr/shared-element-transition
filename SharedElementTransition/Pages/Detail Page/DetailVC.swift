@@ -29,7 +29,7 @@ class DetailVC: UIViewController {
     // MARK: - Inits
     init(appCard: AppCard) {
         self.appCard = appCard
-        self.appCardView = AppCardView(appCard: appCard, appCardState: .full)
+        self.appCardView = AppCardView(appCard: appCard, appCardState: .expanded)
         super.init(nibName: nil, bundle: nil)
     }
     

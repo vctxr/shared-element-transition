@@ -86,14 +86,20 @@ extension TodayHeaderCollectionReusableView {
         
         addSubview(verticalStackView)
         
+        let verticalStackBottomConstraint = verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
+        verticalStackBottomConstraint.priority = .defaultHigh
+        
+        let verticalStackTrailingConstraint = verticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+        verticalStackTrailingConstraint.priority = .defaultHigh
+
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: 40),
             profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor),
 
             verticalStackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             verticalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            verticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
+            verticalStackTrailingConstraint,
+            verticalStackBottomConstraint
         ])
     }
 }

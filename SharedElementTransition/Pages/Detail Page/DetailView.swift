@@ -28,6 +28,7 @@ class DetailView: UIView {
         label.textColor = .secondaryLabel
         label.font = .systemFont(ofSize: 20)
         label.numberOfLines = 0
+        label.applyDynamicType()
         return label
     }()
     
@@ -68,7 +69,7 @@ extension DetailView {
             appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: -UIDevice.current.safeAreaTopHeight),
             appCardView.leadingAnchor.constraint(equalTo: leadingAnchor),
             appCardView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            appCardView.heightAnchor.constraint(equalToConstant: 450),
+            appCardView.heightAnchor.constraint(equalToConstant: Constants.APP_CARD_EXPANDED_HEIGHT),
             
             textLabel.topAnchor.constraint(equalTo: appCardView.bottomAnchor, constant: 40),
             textLabel.leadingAnchor.constraint(equalTo: appCardView.leadingAnchor, constant: 20),

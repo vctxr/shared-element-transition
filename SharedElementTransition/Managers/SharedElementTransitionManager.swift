@@ -7,39 +7,32 @@
 
 import UIKit
 
-enum TransitionType {
-    case present
-    case dismiss
-    
-    var blurAlpha: CGFloat { return self == .present ? 1 : 0 }
-    var backdropAlpha: CGFloat { return self == .present ? 0.5 : 0 }
-    var closeAlpha: CGFloat { return self == .present ? 1 : 0 }
-    var cornerRadius: CGFloat { return self == .present ? 10 : 0 }
-    var appCardState: AppCardState { return self == .present ? .card : .full }
-    var next: TransitionType { return self == .present ? .dismiss : .present }
-}
-
 class SharedElementTransitionManager: NSObject {
     
-    let TRANSITION_DURATION: TimeInterval = 0.8
-    let SHRINK_DURATION: TimeInterval = 0.05
+    private let TRANSITION_DURATION: TimeInterval = Constants.SHARED_TRANSITION_ANIMATION_DURATION
+    private let SHRINK_DURATION: TimeInterval = Constants.SHARED_TRANSITION_ANIMATION_DURATION * 0.1
+    private let SHRINK_SCALE: CGFloat = Constants.SHARED_TRANSITION_SHRINK_SCALE
     
-    var transition: TransitionType = .present
-    
+    private var transition: TransitionType = .present
     
     // MARK: - Supporting Views for Shared Element Transition
-    lazy var blurEffectView: UIVisualEffectView = {
-        let blur = UIBlurEffect(style: .light)
+    private lazy var blurEffectView: UIVisualEffectView = {
+        let blur = UIBlurEffect(style: .regular)
         let blurView = UIVisualEffectView(effect: blur)
         return blurView
     }()
     
-    lazy var backdropView: UIView = {
+    private lazy var backdropView: UIView = {
         let view = UIView()
         view.backgroundColor = .black
         return view
     }()
     
+    private lazy var expandingBottomBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .red
+        return view
+    }()
     
     // MARK: - Helper Functions
     private func addBackgroundViews(to containerView: UIView) {
@@ -56,63 +49,12 @@ class SharedElementTransitionManager: NSObject {
     /// Creates a copy of an AppCardView by value, not by reference.
     private func createAppCardViewCopy(appCardView: AppCardView, withModel appCard: AppCard) -> AppCardView {
         let appCard = appCardView.appCard!
-        let cardViewCopy = AppCardView(appCard: appCard, appCardState: transition.appCardState)
+        let cardViewCopy = AppCardView(appCard: appCard, appCardState: transition.next.appCardState)
         return cardViewCopy
     }
 }
 
-
-// MARK: - Transition Animations
-extension SharedElementTransitionManager {
-    
-    private func createShrinkAnimator(for appCardView: AppCardView) -> UIViewPropertyAnimator {
-        return UIViewPropertyAnimator(duration: SHRINK_DURATION, curve: .easeOut) {
-            appCardView.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
-        }
-    }
-    
-    private func createExpandContractAnimator(for appCardView: AppCardView, in containerView: UIView, yOrigin: CGFloat) -> UIViewPropertyAnimator {
-        let springTiming = UISpringTimingParameters(dampingRatio: 0.7, initialVelocity: CGVector(dx: 0, dy: 5))
-        let animator = UIViewPropertyAnimator(duration: TRANSITION_DURATION - SHRINK_DURATION, timingParameters: springTiming)
-        
-        animator.addAnimations {
-            appCardView.transform = .identity
-            appCardView.frame.origin.y = yOrigin
-            appCardView.containerView.layer.cornerRadius = self.transition.next.cornerRadius
-            
-            appCardView.updateLayout(for: self.transition.next.appCardState)
-            
-            self.blurEffectView.alpha = self.transition.blurAlpha
-            self.backdropView.alpha = self.transition.backdropAlpha
-            
-            containerView.layoutIfNeeded()
-        }
-        
-        return animator
-    }
-    
-    private func startTransition(appCardView: AppCardView, containerView: UIView, yOriginToMoveTo: CGFloat, completion: @escaping () -> Void) {
-        let shrinkAnimator = createShrinkAnimator(for: appCardView)
-        let expandContractAnimator = createExpandContractAnimator(for: appCardView, in: containerView, yOrigin: yOriginToMoveTo)
-        
-        expandContractAnimator.addCompletion { _ in
-            completion()
-        }
-        
-        if transition == .present {
-            shrinkAnimator.addCompletion { _ in
-                appCardView.layoutIfNeeded()
-                expandContractAnimator.startAnimation()
-            }
-            
-            shrinkAnimator.startAnimation()
-        } else {
-            appCardView.layoutIfNeeded()
-            expandContractAnimator.startAnimation()
-        }
-    }
-}
-
+// MARK: - UIViewController Animated Transitioning
 extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -129,52 +71,68 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         let toVC = transitionContext.viewController(forKey: .to)
          
         // For some reason when embedded inside a tab bar controller, the .from vc of the transition is recognized as the tab bar controller, not the Today vc. So need to cast .from vc into a tab bar controller then cast it again to Today vc.
-        guard let todayVC = (transition == .present) ? (fromVC as? UITabBarController)?.selectedViewController as? TodayVC
-                                                     : (toVC as? UITabBarController)?.selectedViewController as? TodayVC,
+        guard let tabBarController = (transition == .present) ? (fromVC as? UITabBarController) : (toVC as? UITabBarController),
+              let todayVC = tabBarController.selectedViewController as? TodayVC,
+              let detailVC = (transition == .present) ? (toVC as? DetailVC) : (fromVC as? DetailVC),
               let appCardView = todayVC.getSelectedAppCardView(),
-              let appCard = appCardView.appCard
+              let appCard = appCardView.appCard,
+              let tabBarCopy = tabBarController.tabBar.createCopy() as? UITabBar,
+              let originalTabBarFrame = todayVC.originalTabBarFrame
         else { return }
              
+        // Create a copy of the selected app card view with the same frame as the copied app card view
         let appCardViewCopy = createAppCardViewCopy(appCardView: appCardView, withModel: appCard)
         let absoluteAppCardViewFrame = appCardView.convert(appCardView.frame, to: nil)
-        appCardViewCopy.frame = absoluteAppCardViewFrame
-        
+        appCardViewCopy.frame = (transition == .present) ? absoluteAppCardViewFrame :
+                                                           CGRect(x: 0, y: 0, width: appCardView.frame.width, height: appCardView.frame.height)
+        appCardViewCopy.layoutIfNeeded()
         containerView.addSubview(appCardViewCopy)
-        appCardView.isHidden = true
+         
+        // Initial expanding bottom background view setup
+        expandingBottomBackgroundView.frame = (transition == .present) ? appCardViewCopy.containerView.frame : containerView.frame.inset(by: UIEdgeInsets(top: appCardViewCopy.frame.height, left: 0, bottom: 0, right: 0))
+        expandingBottomBackgroundView.layer.cornerRadius = transition.cornerRadius
+        expandingBottomBackgroundView.backgroundColor = .systemBackground
+        appCardViewCopy.insertSubview(expandingBottomBackgroundView, aboveSubview: appCardViewCopy.shadowView)
+
+        // Initial tab bar copy setup
+        let hiddenTabBarFrame = originalTabBarFrame.offsetBy(dx: 0, dy: 100)
+        tabBarCopy.frame = (transition == .present) ? originalTabBarFrame : hiddenTabBarFrame
+        containerView.addSubview(tabBarCopy)
+        containerView.layoutIfNeeded()
         
+        // Hide original app card view and original tab bar
+        appCardView.isHidden = true
+        tabBarController.tabBar.isHidden = true
+                
         if transition == .present {
-            let detailView = toVC as! DetailVC
-            containerView.addSubview(detailView.view)
-            detailView.view.isHidden = true
+            containerView.addSubview(detailVC.view)
+            detailVC.view.isHidden = true
             
-            startTransition(appCardView: appCardViewCopy, containerView: containerView, yOriginToMoveTo: 0) {
-                detailView.view.isHidden = false
-                appCardViewCopy.removeFromSuperview()
+            startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, containerView: containerView, yAppCardTarget: 0, yTabBarTarget: hiddenTabBarFrame.origin.y) {
+                detailVC.view.isHidden = false
                 appCardView.isHidden = false
+                tabBarController.tabBar.isHidden = false
+                
+                appCardViewCopy.removeFromSuperview()
+                self.expandingBottomBackgroundView.removeFromSuperview()
+                
                 transitionContext.completeTransition(true)
             }
         } else {
-            let detailVC = fromVC as! DetailVC
-            let tabBarController = toVC as! UITabBarController
-            guard let tabBar = tabBarController.tabBar.copyView() as? UITabBar,
-                  let originalTabBarFrame = todayVC.originalTabBarFrame else { return }
-            
-            UIView.animateTabBarFrames(tabBar: tabBar, newFrame: originalTabBarFrame)
-
-            containerView.addSubview(tabBar)
-            containerView.layoutIfNeeded()
-            
-            appCardViewCopy.frame = CGRect(x: 0, y: 0, width: detailVC.detailView.appCardView.frame.width, height: detailVC.detailView.appCardView.frame.height)
-
-            startTransition(appCardView: appCardViewCopy, containerView: containerView, yOriginToMoveTo: absoluteAppCardViewFrame.origin.y) {
-                appCardViewCopy.removeFromSuperview()
+            startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, containerView: containerView, yAppCardTarget: absoluteAppCardViewFrame.origin.y, yTabBarTarget: originalTabBarFrame.origin.y) {
                 appCardView.isHidden = false
+                tabBarController.tabBar.isHidden = false
+                
+                appCardViewCopy.removeFromSuperview()
+                self.expandingBottomBackgroundView.removeFromSuperview()
+                
                 transitionContext.completeTransition(true)
             }
         }
     }
 }
 
+// MARK: - UIViewController Transitioning Delegate
 extension SharedElementTransitionManager: UIViewControllerTransitioningDelegate {
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -185,5 +143,82 @@ extension SharedElementTransitionManager: UIViewControllerTransitioningDelegate 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transition = .dismiss
         return self
+    }
+}
+
+// MARK: - Transition Animations
+extension SharedElementTransitionManager {
+    
+    private func createShrinkAnimator(for appCardView: AppCardView) -> UIViewPropertyAnimator {
+        return UIViewPropertyAnimator(duration: SHRINK_DURATION, curve: .easeOut) {
+            appCardView.transform = CGAffineTransform(scaleX: self.SHRINK_SCALE, y: self.SHRINK_SCALE)
+        }
+    }
+    
+    private func createExpandContractAnimator(for appCardView: AppCardView, tabBar: UITabBar, in containerView: UIView, yOriginAppCard: CGFloat, yOriginTabBar: CGFloat) -> UIViewPropertyAnimator {
+        let springTiming = UISpringTimingParameters(dampingRatio: 0.7, initialVelocity: CGVector(dx: 0, dy: 5))
+        let animator = UIViewPropertyAnimator(duration: TRANSITION_DURATION - SHRINK_DURATION, timingParameters: springTiming)
+        
+        animator.addAnimations {
+            // Set app card view copy target state
+            appCardView.transform = .identity
+            appCardView.frame.origin.y = yOriginAppCard
+            appCardView.containerView.layer.cornerRadius = self.transition.next.cornerRadius
+            appCardView.updateLayout(for: self.transition.appCardState)
+            
+            // Set expanding bottom background view target state
+            self.expandingBottomBackgroundView.frame = (self.transition == .present) ? containerView.frame : appCardView.containerView.frame
+            self.expandingBottomBackgroundView.layer.cornerRadius = self.transition.next.cornerRadius
+            self.expandingBottomBackgroundView.backgroundColor = self.transition.expandingBottomBackgroundViewColor
+            
+            // Set blur and backdrop view target state
+            self.blurEffectView.alpha = self.transition.blurAlpha
+            self.backdropView.alpha = self.transition.backdropAlpha
+            
+            // Set tab bar copy target state
+            tabBar.frame.origin.y = yOriginTabBar
+
+            containerView.layoutIfNeeded()
+        }
+        
+        return animator
+    }
+    
+    private func startTransition(appCardView: AppCardView, tabBar: UITabBar, containerView: UIView, yAppCardTarget: CGFloat, yTabBarTarget: CGFloat , completion: @escaping () -> Void) {
+        
+        let expandContractAnimator = createExpandContractAnimator(for: appCardView, tabBar: tabBar, in: containerView, yOriginAppCard: yAppCardTarget, yOriginTabBar: yTabBarTarget)
+
+        expandContractAnimator.addCompletion { _ in
+            completion()
+        }
+        
+        if transition == .present {
+            let shrinkAnimator = createShrinkAnimator(for: appCardView)
+            
+            shrinkAnimator.addCompletion { _ in
+                expandContractAnimator.startAnimation()
+            }
+            
+            shrinkAnimator.startAnimation()
+        } else {
+            expandContractAnimator.startAnimation()
+        }
+    }
+}
+
+// MARK: - Transition Type
+extension SharedElementTransitionManager {
+    
+    enum TransitionType {
+        case present
+        case dismiss
+        
+        var blurAlpha: CGFloat { return self == .present ? 1 : 0 }
+        var backdropAlpha: CGFloat { return self == .present ? 0.5 : 0 }
+        var closeAlpha: CGFloat { return self == .present ? 1 : 0 }
+        var cornerRadius: CGFloat { return self == .present ? Constants.APP_CARD_CORNER_RADIUS : 0 }
+        var appCardState: AppCardState { return self == .present ? .full : .card }
+        var expandingBottomBackgroundViewColor: UIColor { return self == .present ? .systemBackground : .clear }
+        var next: TransitionType { return self == .present ? .dismiss : .present }
     }
 }

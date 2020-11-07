@@ -25,7 +25,10 @@ struct AppCard: Decodable {
         case highlight
         case explore
     }
-    
+}
+
+extension AppCard {
+    /// Returns an array of AppCard data loaded from a local .json file.
     static func getAppCards() -> [AppCard] {
         let appData = fetchFromJSON(ofType: AppCard.self, fileName: "app-data")
         return appData

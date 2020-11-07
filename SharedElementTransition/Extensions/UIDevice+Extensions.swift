@@ -9,8 +9,8 @@ import UIKit
 
 extension UIDevice {
     
-    var keyWindow: UIWindow? {
-        return UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+    private var keyWindow: UIWindow? {
+        return UIApplication.shared.windows.filter { $0.isKeyWindow }.first
     }
     
     var hasNotch: Bool {

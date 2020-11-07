@@ -17,18 +17,18 @@ class AppCardView: UIView {
     let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 10
+        view.layer.cornerRadius = Constants.APP_CARD_CORNER_RADIUS
         view.clipsToBounds = true
         return view
     }()
     
-    lazy private var shadowView: UIView = {
+    let shadowView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 1
-        view.layer.shadowRadius = 10
-        view.layer.shadowOffset = CGSize(width: 0, height: 12)
+        view.layer.shadowOpacity = Constants.APP_CARD_SHADOW_OPACITY
+        view.layer.shadowRadius = Constants.APP_CARD_SHADOW_RADIUS
+        view.layer.shadowOffset = Constants.APP_CARD_SHADOW_OFFSET
         return view
     }()
     
@@ -36,10 +36,9 @@ class AppCardView: UIView {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
+//        imageView.clipsToBounds = true
         return imageView
     }()
-    
     
     // MARK: - Title and Subtitle
     lazy private var subtitleLabel: UILabel = {
@@ -67,7 +66,6 @@ class AppCardView: UIView {
         return stackView
     }()
     
-    
     // MARK: - Description
     lazy private var descriptionLabel: UILabel = {
         let label = UILabel()
@@ -78,7 +76,6 @@ class AppCardView: UIView {
         return label
     }()
     
-    
     // MARK: - App of The Day
     lazy private var appOfTheDayLabel: UILabel = {
         let label = UILabel()
@@ -87,7 +84,6 @@ class AppCardView: UIView {
         label.numberOfLines = 0
         return label
     }()
-    
     
     // MARK: - Bottom CTA
     lazy private var blurEffectView: UIVisualEffectView = {
@@ -147,7 +143,6 @@ class AppCardView: UIView {
         return button
     }()
     
-    
     // MARK: - Layout Constraints
     var topTitleConstraint: NSLayoutConstraint?
     var leadingConstraint: NSLayoutConstraint?
@@ -165,7 +160,9 @@ class AppCardView: UIView {
     init(appCard: AppCard, appCardState: AppCardState) {
         self.appCard = appCard
         self.appCardState = appCardState
+        
         super.init(frame: .zero)
+        
         configureSubviews(with: appCard)
     }
     
@@ -182,7 +179,6 @@ class AppCardView: UIView {
         shadowView.layer.shadowPath = UIBezierPath(roundedRect: containerView.bounds.insetBy(dx: 5, dy: 0), cornerRadius: containerView.layer.cornerRadius).cgPath
     }
     
-    
     // MARK: - Functions
     func updateLayout(for appCardState: AppCardState) {
         self.appCardState = appCardState
@@ -193,46 +189,18 @@ class AppCardView: UIView {
             leadingConstraint?.constant = 20
             trailingConstraint?.constant = -20
             
-            showShadow()
+            shadowView.showAllShadows(opacity: Constants.APP_CARD_SHADOW_OPACITY, radius: Constants.APP_CARD_SHADOW_RADIUS, offset: Constants.APP_CARD_SHADOW_OFFSET)
         case .full:
-            topTitleConstraint?.constant = max(24, UIDevice.current.safeAreaTopHeight)
+            topTitleConstraint?.constant = UIDevice.current.safeAreaTopHeight
             leadingConstraint?.constant = 0
             trailingConstraint?.constant = 0
             
-            hideShadow()
+            shadowView.hideAllShadows()
         }
-    }
-    
-    func showShadow() {
-        shadowView.layer.shadowColor = UIColor.black.cgColor
-        shadowView.layer.shadowOpacity = 0.2
-        shadowView.layer.shadowRadius = 10
-        shadowView.layer.shadowOffset = CGSize(width: 0, height: 12)
-    }
-    
-    func hideShadow() {
-        shadowView.layer.shadowColor = UIColor.clear.cgColor
-        shadowView.layer.shadowOpacity = 0
-        shadowView.layer.shadowRadius = 0
-        shadowView.layer.shadowOffset = CGSize(width: 0, height: 0)
-    }
-    
-    func configureContainer(for state: AppCardState) {
-        updateLayout(for: state)
-        
-        switch state {
-        case .card:
-            containerView.layer.cornerRadius = 10
-        case .full:
-            containerView.layer.cornerRadius = 0
-        }
-    }
-    
-    private func removeViews(views: [UIView]) {
-        views.forEach({ $0.removeFromSuperview() })
     }
 }
 
+// MARK: - Configurations
 extension AppCardView {
     
     private func configureSubviews(with appCard: AppCard) {
@@ -261,23 +229,23 @@ extension AppCardView {
             backgroundImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
-        
-        updateLayout(for: appCardState)
-        
+                
         switch appCard.type {
         case .appOfTheDay:
-            removeViews(views: [titleStackView, descriptionLabel])
+            removeViewsFromSuperview(views: [titleStackView, descriptionLabel])
             configureBottomCTA(with: appCard)
             configureAppOfTheDay(with: appCard)
         case .highlight:
-            removeViews(views: [appOfTheDayLabel, blurEffectView])
+            removeViewsFromSuperview(views: [appOfTheDayLabel, blurEffectView])
             configureTitleAndSubtitle(with: appCard)
             configureDescription(with: appCard)
         case .explore:
-            removeViews(views: [appOfTheDayLabel, appIconImageView])
+            removeViewsFromSuperview(views: [appOfTheDayLabel, appIconImageView])
             configureTitleAndSubtitle(with: appCard)
             configureBottomCTA(with: appCard)
         }
+        
+        updateLayout(for: appCardState)
     }
     
     private func configureAppOfTheDay(with appCard: AppCard) {
@@ -291,7 +259,7 @@ extension AppCardView {
         ])
         
         appOfTheDayLabel.text = appCard.largeTitle
-        appOfTheDayLabel.setLineSpacing(lineHeightMultiple: 0.75)
+        appOfTheDayLabel.applyLineSpacing(lineHeightMultiple: 0.75)
         
         appOfTheDayLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
     }

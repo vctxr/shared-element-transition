@@ -15,8 +15,8 @@ extension UILabel {
         adjustsFontForContentSizeCategory = true
     }
     
-    /// Sets the label's text line spacing. Only call this function after the label's text is set.
-    func setLineSpacing(lineSpacing: CGFloat = 0.0, lineHeightMultiple: CGFloat = 0.0) {
+    /// Applies the label's text line spacing with the desired spacing. Only call this function after the label's text is set, otherwise the spacing will not be calculated.
+    func applyLineSpacing(lineSpacing: CGFloat = 0.0, lineHeightMultiple: CGFloat = 0.0) {
         guard let labelText = self.text else { return }
         
         let paragraphStyle = NSMutableParagraphStyle()

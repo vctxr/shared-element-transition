@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol DetailVCDelegate: class {
-    func didDismissDetail()
-}
-
 class DetailVC: UIViewController {
     
     override var prefersStatusBarHidden: Bool {
@@ -22,14 +18,13 @@ class DetailVC: UIViewController {
         let detailView = DetailView(appCardView: appCardView)
         detailView.frame = view.bounds
         detailView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
+        detailView.appCardView.translatesAutoresizingMaskIntoConstraints = false
+        detailView.appCardView.containerView.layer.cornerRadius = 0
         return detailView
     }()
-    
-    weak var delegate: DetailVCDelegate?
-    
+        
     private let appCardView: AppCardView
     private let appCard: AppCard
-    
     
     // MARK: - Inits
     init(appCard: AppCard) {
@@ -42,22 +37,14 @@ class DetailVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        print("Detail Deinit.")
-    }
-    
-    
     // MARK: - VC Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view = detailView
     }
     
-    
     // MARK: - Handlers
     @objc private func didTapCloseButton() {
-        dismiss(animated: true) { [weak self] in
-            self?.delegate?.didDismissDetail()
-        }
+        dismiss(animated: true)
     }
 }

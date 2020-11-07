@@ -18,18 +18,22 @@ class TodayVC: UIViewController {
         return todayView
     }()
     
-    var originalTabBarFrame: CGRect?
+    private lazy var tabBar: UITabBar? = {
+        return tabBarController?.tabBar
+    }()
+    
+    lazy var originalTabBarFrame: CGRect? = {
+        return tabBar?.frame
+    }()
     
     private let sharedElementTransitionManager = SharedElementTransitionManager()
     private let appCards: [AppCard] = AppCard.getAppCards()
-    
     
     // MARK: - VC Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view = todayView
     }
-    
     
     // MARK: - Functions
     func getSelectedAppCardView() -> AppCardView? {
@@ -39,7 +43,6 @@ class TodayVC: UIViewController {
         return cell.appCardView
     }
 }
-
 
 // MARK: - CollectionView Delegate and Data Source
 extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
@@ -82,23 +85,8 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
         let selectedAppCard = appCards[indexPath.row]
         let detailVC = DetailVC(appCard: selectedAppCard)
         detailVC.transitioningDelegate = sharedElementTransitionManager
-        detailVC.delegate = self
         detailVC.modalPresentationStyle = .overCurrentContext
-        
         present(detailVC, animated: true, completion: nil)
-        
-        let tabBar = tabBarController?.tabBar
-        originalTabBarFrame = tabBar?.frame
-        UIView.animateTabBarFrames(tabBar: tabBar, newFrame: tabBar?.frame.offsetBy(dx: 0, dy: 100))
-    }
-}
-
-
-extension TodayVC: DetailVCDelegate {
-    
-    func didDismissDetail() {
-        guard let originalTabBarFrame = originalTabBarFrame else { return }
-        tabBarController?.tabBar.frame = originalTabBarFrame
     }
 }
 

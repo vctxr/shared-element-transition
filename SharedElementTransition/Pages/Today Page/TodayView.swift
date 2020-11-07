@@ -29,7 +29,6 @@ class TodayView: UIView {
         return collectionView
     }()
     
-    
     // MARK: - Inits
     override init(frame: CGRect) {
         super.init(frame: frame)

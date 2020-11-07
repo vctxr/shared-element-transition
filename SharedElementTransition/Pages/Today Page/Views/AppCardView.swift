@@ -206,7 +206,7 @@ class AppCardView: UIView {
             
             shadowView.showAllShadows(opacity: Constants.APP_CARD_SHADOW_OPACITY, radius: Constants.APP_CARD_SHADOW_RADIUS, offset: Constants.APP_CARD_SHADOW_OFFSET)
         case .expanded:
-            topTitleConstraint?.constant = UIDevice.current.safeAreaTopHeight
+            topTitleConstraint?.constant = max(20, UIDevice.current.safeAreaTopHeight)
             leadingConstraint?.constant = 0
             trailingConstraint?.constant = 0
             

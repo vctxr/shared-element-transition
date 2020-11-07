@@ -28,7 +28,7 @@ class TodayView: UIView {
         collectionView.delaysContentTouches = false
         return collectionView
     }()
-    
+        
     // MARK: - Inits
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,7 +56,7 @@ extension TodayView {
         addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
+            collectionView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)

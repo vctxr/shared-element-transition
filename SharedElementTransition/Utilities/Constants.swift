@@ -19,4 +19,6 @@ struct Constants {
     
     static let SHARED_TRANSITION_ANIMATION_DURATION: TimeInterval = 0.9
     static let SHARED_TRANSITION_SHRINK_SCALE: CGFloat = 0.97
+    
+    static let STATUS_BAR_TRANSITION_ANIMATION_DURATION: TimeInterval = 0.4
 }

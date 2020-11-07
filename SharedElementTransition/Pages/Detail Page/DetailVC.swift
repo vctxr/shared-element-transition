@@ -7,12 +7,20 @@
 
 import UIKit
 
-class DetailVC: UIViewController {
+class DetailVC: UIViewController, StatusBarAnimation {
+    
+    // MARK: - Status Bar Animation
+    var statusBarShouldBeHidden: Bool = false
+    var statusBarAnimationStyle: UIStatusBarAnimation = .slide
     
     override var prefersStatusBarHidden: Bool {
-        return true
+        return statusBarShouldBeHidden
     }
-
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return statusBarAnimationStyle
+    }
+        
     // The main view of this controller
     lazy var detailView: DetailView = {
         let detailView = DetailView(appCardView: appCardView)
@@ -43,8 +51,16 @@ class DetailVC: UIViewController {
         view = detailView
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        animateStatusBarAppearance(hidden: true, duration: Constants.STATUS_BAR_TRANSITION_ANIMATION_DURATION)
+    }
+    
     // MARK: - Handlers
     @objc private func didTapCloseButton() {
-        dismiss(animated: true)
+        statusBarAnimationStyle = .none
+        animateStatusBarAppearance(hidden: false, duration: 0) { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
 }

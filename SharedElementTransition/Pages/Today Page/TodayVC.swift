@@ -26,7 +26,7 @@ class TodayVC: UIViewController {
         return tabBar?.frame
     }()
     
-    lazy var safeAreaTop: CGFloat = {
+    private lazy var safeAreaTopInset: CGFloat = {
         return UIDevice.current.safeAreaTopHeight
     }()
             
@@ -90,8 +90,8 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
         let yOffset = scrollView.contentOffset.y
         
         // The initial top y offset is safe area top inset
-        if yOffset <= -safeAreaTop + 10  {
-            let opacity = 1 + ((yOffset + (safeAreaTop - 10)) / 10 ) * 1
+        if yOffset <= -safeAreaTopInset + 10  {
+            let opacity = 1 + ((yOffset + (safeAreaTopInset - 10)) / 10 ) * 1
             todayView.statusBarBlurView.layer.opacity = Float(opacity)
         } else {
             todayView.statusBarBlurView.layer.opacity = 1

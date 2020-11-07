@@ -18,6 +18,7 @@ class DetailView: UIView {
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.contentInsetAdjustmentBehavior = .never
         return scrollView
     }()
     
@@ -59,14 +60,14 @@ extension DetailView {
         
         scrollView.addSubview(appCardView)
         scrollView.addSubview(textLabel)
-
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: -UIDevice.current.safeAreaTopHeight),
+            appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             appCardView.leadingAnchor.constraint(equalTo: leadingAnchor),
             appCardView.trailingAnchor.constraint(equalTo: trailingAnchor),
             appCardView.heightAnchor.constraint(equalToConstant: Constants.APP_CARD_EXPANDED_HEIGHT),

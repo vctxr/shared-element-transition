@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// A class that manages all shared element view controller transition.
 class SharedElementTransitionManager: NSObject {
     
     private let TRANSITION_DURATION: TimeInterval = Constants.SHARED_TRANSITION_ANIMATION_DURATION

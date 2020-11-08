@@ -9,7 +9,7 @@ import Foundation
 
 struct AppCard: Decodable {
     let type: CardType
-    let backgroundType: BackgroundType
+    let backgroundAppearance: BackgroundType
     let largeTitle: String?
     let appName: String
     let appIconName: String?
@@ -36,11 +36,11 @@ extension AppCard {
 }
 
 struct BackgroundType: Decodable {
-    let top: [Appearance]
+    let top: Appearance
     let bottom: Appearance
-    
-    enum Appearance: String, Decodable {
-        case light
-        case dark
-    }
+}
+
+enum Appearance: String, Decodable {
+    case light
+    case dark
 }

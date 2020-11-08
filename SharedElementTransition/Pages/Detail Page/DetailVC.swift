@@ -26,8 +26,7 @@ class DetailVC: UIViewController, StatusBarAnimation {
         let detailView = DetailView(appCardView: appCardView)
         detailView.frame = view.bounds
         detailView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
-        detailView.appCardView.translatesAutoresizingMaskIntoConstraints = false
-        detailView.appCardView.containerView.layer.cornerRadius = 0
+        detailView.scrollView.delegate = self
         return detailView
     }()
         
@@ -56,11 +55,48 @@ class DetailVC: UIViewController, StatusBarAnimation {
         animateStatusBarAppearance(hidden: true, duration: Constants.STATUS_BAR_TRANSITION_ANIMATION_DURATION)
     }
     
+    // MARK: - Trait Collection Did Change
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            let yOffset = detailView.scrollView.contentOffset.y
+            changeCloseButtonAppearance(basedOn: yOffset)
+        }
+    }
+    
     // MARK: - Handlers
     @objc private func didTapCloseButton() {
-        statusBarAnimationStyle = .none
-        animateStatusBarAppearance(hidden: false, duration: 0) { [weak self] in
+        statusBarAnimationStyle = .fade
+        animateStatusBarAppearance(hidden: false, duration: Constants.STATUS_BAR_TRANSITION_ANIMATION_DURATION) { [weak self] in
             self?.dismiss(animated: true)
         }
+    }
+    
+    // MARK: - Helper Functions
+    func changeCloseButtonAppearance(basedOn yOffset: CGFloat) {
+        if yOffset < Constants.APP_CARD_EXPANDED_HEIGHT - (Constants.APP_CARD_CLOSE_BUTTON_SIZE.height / 2) - 20 {
+            switch appCard.backgroundAppearance.top {
+            case .light:
+                detailView.closeButton.animateAppearanceIfNeeded(for: .dark)
+            case .dark:
+                detailView.closeButton.animateAppearanceIfNeeded(for: .light)
+            }
+        } else {
+            if isDarkMode {
+                detailView.closeButton.animateAppearanceIfNeeded(for: .light)
+            } else {
+                detailView.closeButton.animateAppearanceIfNeeded(for: .dark)
+            }
+        }
+    }
+}
+
+// MARK: - ScrollView Delegate
+extension DetailVC: UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let yOffset = scrollView.contentOffset.y
+        changeCloseButtonAppearance(basedOn: yOffset)
     }
 }

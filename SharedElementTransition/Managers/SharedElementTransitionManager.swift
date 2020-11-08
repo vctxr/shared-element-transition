@@ -80,6 +80,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
               let todayVC = tabBarController.selectedViewController as? TodayVC,
               let detailVC = (transition == .present) ? (toVC as? DetailVC) : (fromVC as? DetailVC),
               let textLabelCopy = detailVC.detailView.textLabel.createCopy() as? UILabel,
+              let closeButtonCopy = detailVC.detailView.closeButton.createCopy() as? UIButton,
               let appCardView = todayVC.getSelectedAppCardView(),
               let appCard = appCardView.appCard,
               let tabBarCopy = tabBarController.tabBar.createCopy() as? UITabBar,
@@ -88,7 +89,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
             transitionContext.completeTransition(false)
             return
         }
-             
+        
         // Create a copy of the selected app card view with the same frame as the copied app card view
         let appCardViewCopy = createAppCardViewCopy(appCardView: appCardView, withModel: appCard)
         let absoluteAppCardViewFrame = appCardView.convert(appCardView.frame, to: nil)
@@ -109,8 +110,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         containerView.addSubview(tabBarCopy)
         containerView.layoutIfNeeded()
         
-        // Lay out text label
-        textLabelCopy.translatesAutoresizingMaskIntoConstraints = false
+        // Lay out text label copy
         expandingBottomBackgroundView.addSubview(textLabelCopy)
         NSLayoutConstraint.activate([
             textLabelCopy.topAnchor.constraint(equalTo: appCardViewCopy.bottomAnchor, constant: 40),
@@ -119,32 +119,45 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         ])
         containerView.layoutIfNeeded()
         
+        // Lay out close button copy
+        closeButtonCopy.layer.cornerRadius = Constants.APP_CARD_CLOSE_BUTTON_SIZE.width / 2
+        closeButtonCopy.alpha = transition.next.closeButtonAlpha
+        appCardViewCopy.addSubview(closeButtonCopy)
+        NSLayoutConstraint.activate([
+            closeButtonCopy.widthAnchor.constraint(equalToConstant: Constants.APP_CARD_CLOSE_BUTTON_SIZE.width),
+            closeButtonCopy.heightAnchor.constraint(equalTo: closeButtonCopy.widthAnchor),
+            closeButtonCopy.topAnchor.constraint(equalTo: appCardViewCopy.containerView.topAnchor, constant: 20),
+            closeButtonCopy.trailingAnchor.constraint(equalTo: appCardViewCopy.containerView.trailingAnchor, constant: -20)
+        ])
+        
         // Hide original app card view and original tab bar. Hide tab bar using opacity because issue with collectionview bottom inset ignoring tab bar when it is hidden
         appCardView.isHidden = true
-        tabBarController.tabBar.layer.opacity = 0
+        tabBarController.tabBar.alpha = 0
                 
         if transition == .present {
             containerView.addSubview(detailVC.view)
             detailVC.view.isHidden = true
             
-            startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, containerView: containerView, yAppCardTarget: 0, yTabBarTarget: hiddenTabBarFrame.origin.y) {
+            startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, closeButton: closeButtonCopy, containerView: containerView, yAppCardTarget: 0, yTabBarTarget: hiddenTabBarFrame.origin.y) {
                 detailVC.view.isHidden = false
                 appCardView.isHidden = false
-                tabBarController.tabBar.layer.opacity = 1
+                tabBarController.tabBar.alpha = 1
 
                 appCardViewCopy.removeFromSuperview()
                 textLabelCopy.removeFromSuperview()
+                closeButtonCopy.removeFromSuperview()
                 self.expandingBottomBackgroundView.removeFromSuperview()
                 
                 transitionContext.completeTransition(true)
             }
         } else {
-            startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, containerView: containerView, yAppCardTarget: absoluteAppCardViewFrame.origin.y, yTabBarTarget: originalTabBarFrame.origin.y) {
+            startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, closeButton: closeButtonCopy, containerView: containerView, yAppCardTarget: absoluteAppCardViewFrame.origin.y, yTabBarTarget: originalTabBarFrame.origin.y) {
                 appCardView.isHidden = false
-                tabBarController.tabBar.layer.opacity = 1
+                tabBarController.tabBar.alpha = 1
 
                 appCardViewCopy.removeFromSuperview()
                 textLabelCopy.removeFromSuperview()
+                closeButtonCopy.removeFromSuperview()
                 self.expandingBottomBackgroundView.removeFromSuperview()
                 
                 transitionContext.completeTransition(true)
@@ -176,7 +189,7 @@ extension SharedElementTransitionManager {
         }
     }
     
-    private func createExpandContractAnimators(for appCardView: AppCardView, tabBar: UITabBar, in containerView: UIView, yOriginAppCard: CGFloat, yOriginTabBar: CGFloat) -> [UIViewPropertyAnimator] {
+    private func createExpandContractAnimators(for appCardView: AppCardView, tabBar: UITabBar, closeButton: UIButton, in containerView: UIView, yOriginAppCard: CGFloat, yOriginTabBar: CGFloat) -> [UIViewPropertyAnimator] {
         let springTiming = UISpringTimingParameters(dampingRatio: 0.7, initialVelocity: CGVector(dx: 0, dy: 4))
         let springAnimator = UIViewPropertyAnimator(duration: EXPAND_CONTRACT_DURATION, timingParameters: springTiming)
         
@@ -187,7 +200,7 @@ extension SharedElementTransitionManager {
             appCardView.updateLayout(for: self.transition.appCardState)
         }
         
-        let nonSpringAnimator = UIViewPropertyAnimator(duration: EXPAND_CONTRACT_DURATION * 0.8, dampingRatio: 1) {
+        let nonSpringAnimator = UIViewPropertyAnimator(duration: EXPAND_CONTRACT_DURATION * 0.7, dampingRatio: 1) {
             // Set app card view copy target height
             appCardView.transform = .identity
             appCardView.frame = CGRect(x: appCardView.frame.origin.x, y: yOriginAppCard, width: appCardView.frame.width, height: self.transition.appCardHeight)
@@ -201,6 +214,8 @@ extension SharedElementTransitionManager {
             self.blurEffectView.alpha = self.transition.blurAlpha
             self.backdropView.alpha = self.transition.backdropAlpha
             
+            closeButton.alpha = self.transition.closeButtonAlpha
+            
             // Set tab bar copy target state
             tabBar.frame.origin.y = yOriginTabBar
         }
@@ -208,9 +223,9 @@ extension SharedElementTransitionManager {
         return [springAnimator, nonSpringAnimator]
     }
     
-    private func startTransition(appCardView: AppCardView, tabBar: UITabBar, containerView: UIView, yAppCardTarget: CGFloat, yTabBarTarget: CGFloat , completion: @escaping () -> Void) {
+    private func startTransition(appCardView: AppCardView, tabBar: UITabBar, closeButton: UIButton, containerView: UIView, yAppCardTarget: CGFloat, yTabBarTarget: CGFloat , completion: @escaping () -> Void) {
         
-        let expandContractAnimators = createExpandContractAnimators(for: appCardView, tabBar: tabBar, in: containerView, yOriginAppCard: yAppCardTarget, yOriginTabBar: yTabBarTarget)
+        let expandContractAnimators = createExpandContractAnimators(for: appCardView, tabBar: tabBar, closeButton: closeButton, in: containerView, yOriginAppCard: yAppCardTarget, yOriginTabBar: yTabBarTarget)
 
         expandContractAnimators.first?.addCompletion { _ in
             completion()
@@ -238,8 +253,8 @@ extension SharedElementTransitionManager {
         case dismiss
         
         var blurAlpha: CGFloat { return self == .present ? 1 : 0 }
-        var backdropAlpha: CGFloat { return self == .present ? 0.5 : 0 }
-        var closeAlpha: CGFloat { return self == .present ? 1 : 0 }
+        var backdropAlpha: CGFloat { return self == .present ? 0.2 : 0 }
+        var closeButtonAlpha: CGFloat { return self == .present ? Constants.APP_CARD_CLOSE_BUTTON_ALPHA : 0 }
         var cornerRadius: CGFloat { return self == .present ? Constants.APP_CARD_CORNER_RADIUS : 0 }
         var appCardState: AppCardState { return self == .present ? .expanded : .card }
         var appCardHeight: CGFloat { return self == .present ? Constants.APP_CARD_EXPANDED_HEIGHT : Constants.APP_CARD_HEIGHT }

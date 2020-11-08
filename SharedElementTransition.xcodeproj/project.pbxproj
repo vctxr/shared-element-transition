@@ -29,6 +29,9 @@
 		57CF7502254EC5D6000C1C41 /* TodayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CF7501254EC5D6000C1C41 /* TodayVC.swift */; };
 		57CF7507254EC5D7000C1C41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57CF7506254EC5D7000C1C41 /* Assets.xcassets */; };
 		57CF750A254EC5D7000C1C41 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 57CF7508254EC5D7000C1C41 /* LaunchScreen.storyboard */; };
+		57D818372557F79B00952F4B /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D818362557F79B00952F4B /* CloseButton.swift */; };
+		57D8183B2557FE1100952F4B /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D8183A2557FE1100952F4B /* UIColor+Extensions.swift */; };
+		57D8183E2558034D00952F4B /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D8183D2558034D00952F4B /* UIViewController+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +59,9 @@
 		57CF7506254EC5D7000C1C41 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		57CF7509254EC5D7000C1C41 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		57CF750B254EC5D7000C1C41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57D818362557F79B00952F4B /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
+		57D8183A2557FE1100952F4B /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		57D8183D2558034D00952F4B /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +156,8 @@
 				572EAD26254F23250040BDA3 /* Date+Extensions.swift */,
 				57BE9A74254F2AC700CA0F53 /* UIDevice+Extensions.swift */,
 				571F7B7F254FE669001F9692 /* UIView+Extensions.swift */,
+				57D8183A2557FE1100952F4B /* UIColor+Extensions.swift */,
+				57D8183D2558034D00952F4B /* UIViewController+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -168,6 +176,7 @@
 			children = (
 				57BE9A7A254F319F00CA0F53 /* DetailVC.swift */,
 				57BE9A7D254F31B800CA0F53 /* DetailView.swift */,
+				57D818352557F78900952F4B /* Views */,
 			);
 			path = "Detail Page";
 			sourceTree = "<group>";
@@ -201,6 +210,14 @@
 				57CF750B254EC5D7000C1C41 /* Info.plist */,
 			);
 			path = SharedElementTransition;
+			sourceTree = "<group>";
+		};
+		57D818352557F78900952F4B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				57D818362557F79B00952F4B /* CloseButton.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,12 +294,15 @@
 				572EAD27254F23250040BDA3 /* Date+Extensions.swift in Sources */,
 				57BE9A7B254F319F00CA0F53 /* DetailVC.swift in Sources */,
 				57BE9A7E254F31B800CA0F53 /* DetailView.swift in Sources */,
+				57D8183B2557FE1100952F4B /* UIColor+Extensions.swift in Sources */,
 				57253A0D254ECAFE004BFCFA /* TodayView.swift in Sources */,
+				57D8183E2558034D00952F4B /* UIViewController+Extensions.swift in Sources */,
 				57A66B1A254EDE2D008CB9B8 /* AppCardCollectionCell.swift in Sources */,
 				5796F6B925573230006C34DE /* StatusBarAnimation.swift in Sources */,
 				571F7B80254FE669001F9692 /* UIView+Extensions.swift in Sources */,
 				571F7B7C254FAB78001F9692 /* SharedElementTransitionManager.swift in Sources */,
 				572EAD17254EDEE90040BDA3 /* AppCard.swift in Sources */,
+				57D818372557F79B00952F4B /* CloseButton.swift in Sources */,
 				57BE9A75254F2AC700CA0F53 /* UIDevice+Extensions.swift in Sources */,
 				57CF74FE254EC5D6000C1C41 /* AppDelegate.swift in Sources */,
 				57CF7500254EC5D6000C1C41 /* SceneDelegate.swift in Sources */,

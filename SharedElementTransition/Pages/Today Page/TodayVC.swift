@@ -89,12 +89,14 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOffset = scrollView.contentOffset.y
         
-        // The initial top y offset is safe area top inset
-        if yOffset <= -safeAreaTopInset + 10  {
-            let opacity = 1 + ((yOffset + (safeAreaTopInset - 10)) / 10 ) * 1
-            todayView.statusBarBlurView.layer.opacity = Float(opacity)
+        // The initial top y offset is -(safe area top inset - 20) (because issue in notchless iphones)
+        let topScrollOffset = -(safeAreaTopInset - 20)
+        
+        if yOffset <= topScrollOffset + 12 {
+            let alpha = 1 + ((yOffset - (topScrollOffset + 12)) / 12 ) * 1
+            todayView.statusBarBlurView.alpha = max(0, alpha)
         } else {
-            todayView.statusBarBlurView.layer.opacity = 1
+            todayView.statusBarBlurView.alpha = 1
         }
     }
 }

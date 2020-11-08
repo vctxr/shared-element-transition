@@ -47,7 +47,7 @@ class AppCardView: UIView {
     lazy private var subtitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.preferredFont(forTextStyle: .subheadline).with(weight: .semibold)
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline).with(weight: .bold)
         label.applyDynamicType()
         return label
     }()
@@ -173,6 +173,7 @@ class AppCardView: UIView {
         configureSubviews(with: appCard)
     }
     
+    // Empty init -> no app card model injected
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -287,7 +288,8 @@ extension AppCardView {
         appOfTheDayLabel.text = appCard.largeTitle
         appOfTheDayLabel.applyLineSpacing(lineHeightMultiple: 0.75)
         
-        appOfTheDayLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
+
+        appOfTheDayLabel.textColor = appCard.backgroundAppearance.bottom == .light ? .black : .white
     }
     
     private func configureBottomCTA(with appCard: AppCard) {
@@ -336,9 +338,9 @@ extension AppCardView {
             ctaButton.setTitle("GET", for: .normal)
         }
         
-        appNameLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
-        messageLabel.textColor = appCard.backgroundType.bottom == .light ? .gray : .white
-        ctaButton.backgroundColor = appCard.backgroundType.bottom == .light ? .systemGray5 : .white
+        appNameLabel.textColor = appCard.backgroundAppearance.bottom == .light ? .black : .white
+        messageLabel.textColor = appCard.backgroundAppearance.bottom == .light ? .gray : .white
+        ctaButton.backgroundColor = appCard.backgroundAppearance.bottom == .light ? .lightText : .white
     }
     
     private func configureTitleAndSubtitle(with appCard: AppCard) {
@@ -356,8 +358,8 @@ extension AppCardView {
         subtitleLabel.text = appCard.subtitle
         titleLabel.text = appCard.title
         
-        subtitleLabel.textColor = appCard.backgroundType.top[0] == .light ? .gray : .lightText
-        titleLabel.textColor = appCard.backgroundType.top[1] == .light ? .black : .white
+        subtitleLabel.textColor = appCard.backgroundAppearance.top == .light ? .gray : .lightText
+        titleLabel.textColor = appCard.backgroundAppearance.top == .light ? .black : .white
     }
     
     private func configureDescription(with appCard: AppCard) {
@@ -370,6 +372,6 @@ extension AppCardView {
         ])
         
         descriptionLabel.text = appCard.shortDescription
-        descriptionLabel.textColor = appCard.backgroundType.bottom == .light ? .black : .white
+        descriptionLabel.textColor = appCard.backgroundAppearance.bottom == .light ? .black : .white
     }
 }

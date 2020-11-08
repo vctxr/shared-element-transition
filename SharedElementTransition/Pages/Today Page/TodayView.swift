@@ -13,6 +13,7 @@ class TodayView: UIView {
         let blur = UIBlurEffect(style: .regular)
         let blurView = UIVisualEffectView(effect: blur)
         blurView.translatesAutoresizingMaskIntoConstraints = false
+        blurView.alpha = 0
         return blurView
     }()
     

@@ -9,8 +9,8 @@ import UIKit
 
 class DetailView: UIView {
     
-    let closeButton: UIButton = {
-        let button = UIButton(type: .close)
+    let closeButton: CloseButton = {
+        let button = CloseButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -18,7 +18,7 @@ class DetailView: UIView {
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.delaysContentTouches = false
         return scrollView
     }()
     
@@ -38,10 +38,11 @@ class DetailView: UIView {
     // MARK: - Inits
     init(appCardView: AppCardView) {
         self.appCardView = appCardView
-        
+                
         super.init(frame: .zero)
         
         configureSubviews()
+        configureCloseButtonColor()
     }
     
     required init?(coder: NSCoder) {
@@ -52,14 +53,28 @@ class DetailView: UIView {
 // MARK: - Configurations
 extension DetailView {
     
+    private func configureCloseButtonColor() {
+        switch appCardView.appCard.backgroundAppearance.top {
+        case .light:
+            closeButton.setInitialAppearance(appearance: .dark)
+        case .dark:
+            closeButton.setInitialAppearance(appearance: .light)
+        }
+    }
+    
     private func configureSubviews() {
         backgroundColor = .systemBackground
         
+        appCardView.translatesAutoresizingMaskIntoConstraints = false
+        appCardView.containerView.layer.cornerRadius = 0
+                
         addSubview(scrollView)
         addSubview(closeButton)
         
         scrollView.addSubview(appCardView)
         scrollView.addSubview(textLabel)
+        
+        let appCardViewTopConstant = UIDevice.current.hasNotch ? -UIDevice.current.safeAreaTopHeight : 0
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topAnchor),
@@ -67,7 +82,7 @@ extension DetailView {
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: appCardViewTopConstant),
             appCardView.leadingAnchor.constraint(equalTo: leadingAnchor),
             appCardView.trailingAnchor.constraint(equalTo: trailingAnchor),
             appCardView.heightAnchor.constraint(equalToConstant: Constants.APP_CARD_EXPANDED_HEIGHT),
@@ -77,6 +92,8 @@ extension DetailView {
             textLabel.trailingAnchor.constraint(equalTo: appCardView.trailingAnchor, constant: -20),
             textLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
             
+            closeButton.widthAnchor.constraint(equalToConstant: Constants.APP_CARD_CLOSE_BUTTON_SIZE.width),
+            closeButton.heightAnchor.constraint(equalTo: closeButton.widthAnchor),
             closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])

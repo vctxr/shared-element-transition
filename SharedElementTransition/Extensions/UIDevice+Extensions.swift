@@ -21,4 +21,8 @@ extension UIDevice {
     var safeAreaTopHeight: CGFloat {
         return keyWindow?.safeAreaInsets.top ?? 0
     }
+    
+    var safeAreaBottomHeight: CGFloat {
+        return keyWindow?.safeAreaInsets.bottom ?? 0
+    }
 }

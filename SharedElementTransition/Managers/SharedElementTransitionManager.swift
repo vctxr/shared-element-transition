@@ -147,7 +147,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
                 textLabelCopy.removeFromSuperview()
                 closeButtonCopy.removeFromSuperview()
                 self.expandingBottomBackgroundView.removeFromSuperview()
-                
+                                
                 transitionContext.completeTransition(true)
             }
         } else {

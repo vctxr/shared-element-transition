@@ -20,6 +20,17 @@ extension UIView {
         }
     }
     
+    /// Creates a snapshot of the view as a UIImage
+    /// - Returns: An snapshot image of the view
+    func createSnapshot() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(frame.size, false, 0)
+        drawHierarchy(in: frame, afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image
+    }
+    
     /// Removes the specified views from the view hierarchy.
     /// - Parameter views: Array of UIViews representing the views to be removed from the view hierarchy
     func removeViewsFromSuperview(views: [UIView]) {

@@ -29,7 +29,9 @@ class DetailVC: UIViewController, StatusBarAnimation {
         detailView.scrollView.delegate = self
         return detailView
     }()
-        
+         
+    private var isDismissing: Bool = false
+    
     private let appCardView: AppCardView
     private let appCard: AppCard
     
@@ -96,7 +98,56 @@ class DetailVC: UIViewController, StatusBarAnimation {
 extension DetailVC: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // The initial top y offset is 0.0
         let yOffset = scrollView.contentOffset.y
+        
+        if scrollView.isTracking {
+            scrollView.bounces = true
+        } else {
+            scrollView.bounces = yOffset >= 0
+        }
+        
         changeCloseButtonAppearance(basedOn: yOffset)
+        
+        if yOffset < 0 && scrollView.isTracking {
+            detailView.createSnapshotOfViewIfNeeded()
+            
+            isDismissing = true
+            detailView.isSnapshotShowing = true
+            
+            // Scale ranging from 1 to 0.85 at yOffset = -65
+            let scale = 1 - (yOffset / -65 ) * 0.15
+
+            // Corner radius ranging from 0 to 10 at yOffset = -65
+            let cornerRadius = Constants.APP_CARD_CORNER_RADIUS - ((yOffset + 65) / 65) * Constants.APP_CARD_CORNER_RADIUS
+            
+            // Close button alpha ranging from 0.9 to 0 at yOffset = -65
+            let alpha = Constants.APP_CARD_CLOSE_BUTTON_ALPHA - (yOffset / -65) * Constants.APP_CARD_CLOSE_BUTTON_ALPHA
+            
+            detailView.snapshotImageView.transform = CGAffineTransform(scaleX: scale, y: scale)
+            detailView.snapshotImageView.layer.cornerRadius = cornerRadius
+            
+            if let closeButtonCopy = detailView.closeButtonCopy {
+                closeButtonCopy.alpha = alpha
+            }
+            
+            if yOffset <= -65 {
+                didTapCloseButton()
+            }
+        } else {
+            if isDismissing {
+                isDismissing = false
+                scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+
+                let animator = UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
+                    self.detailView.snapshotImageView.transform = .identity
+                }
+                
+                animator.addCompletion { (_) in
+                    self.detailView.isSnapshotShowing = false
+                }
+                animator.startAnimation()
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ class DetailView: UIView {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.delaysContentTouches = false
+        scrollView.contentInsetAdjustmentBehavior = .never
         return scrollView
     }()
     
@@ -33,6 +34,30 @@ class DetailView: UIView {
         return label
     }()
     
+    lazy var snapshotImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.clipsToBounds = true
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    var closeButtonCopy: CloseButton?
+    
+    var isSnapshotShowing: Bool = false {
+        didSet {
+            closeButton.isHidden = isSnapshotShowing
+            appCardView.isHidden = isSnapshotShowing
+            textLabel.isHidden = isSnapshotShowing
+            snapshotImageView.isHidden = !isSnapshotShowing
+            
+            scrollView.showsVerticalScrollIndicator = !isSnapshotShowing
+            
+            backgroundColor = isSnapshotShowing ? .clear : .systemBackground
+        }
+    }
+    
+    var isSnapshotNeeded: Bool = true
+    
     let appCardView: AppCardView
     
     // MARK: - Inits
@@ -43,10 +68,48 @@ class DetailView: UIView {
         
         configureSubviews()
         configureCloseButtonColor()
+        configureScrollIndicatorInsets()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Trait Collection Did Change
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            isSnapshotNeeded = true
+        }
+    }
+    
+    // MARK: - Helper Functions
+    func createSnapshotOfViewIfNeeded() {
+        guard isSnapshotNeeded else { return }
+        
+        isSnapshotNeeded = !isSnapshotNeeded
+        closeButton.isHidden = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.contentOffset.y = 0
+        let snapshotImage = createSnapshot()
+        scrollView.showsVerticalScrollIndicator = true
+        closeButton.isHidden = false
+        
+        snapshotImageView.image = snapshotImage
+        snapshotImageView.frame = self.bounds
+        
+        closeButtonCopy = closeButton.createCopy()
+        snapshotImageView.addSubview(closeButtonCopy!)
+        
+        NSLayoutConstraint.activate([
+            closeButtonCopy!.widthAnchor.constraint(equalToConstant: Constants.APP_CARD_CLOSE_BUTTON_SIZE.width),
+            closeButtonCopy!.heightAnchor.constraint(equalTo: closeButtonCopy!.widthAnchor),
+            closeButtonCopy!.topAnchor.constraint(equalTo: snapshotImageView.topAnchor, constant: 20),
+            closeButtonCopy!.trailingAnchor.constraint(equalTo: snapshotImageView.trailingAnchor, constant: -20),
+        ])
+        
+        addSubview(snapshotImageView)        
     }
 }
 
@@ -62,6 +125,12 @@ extension DetailView {
         }
     }
     
+    func configureScrollIndicatorInsets() {
+        let topInset = UIDevice.current.hasNotch ? Constants.APP_CARD_EXPANDED_HEIGHT - UIDevice.current.safeAreaTopHeight :
+                                                   Constants.APP_CARD_EXPANDED_HEIGHT
+        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
+    }
+    
     private func configureSubviews() {
         backgroundColor = .systemBackground
         
@@ -74,15 +143,20 @@ extension DetailView {
         scrollView.addSubview(appCardView)
         scrollView.addSubview(textLabel)
         
-        let appCardViewTopConstant = UIDevice.current.hasNotch ? -UIDevice.current.safeAreaTopHeight : 0
+        let textLabelBottomConstant = UIDevice.current.safeAreaBottomHeight + 20
         
         NSLayoutConstraint.activate([
+            closeButton.widthAnchor.constraint(equalToConstant: Constants.APP_CARD_CLOSE_BUTTON_SIZE.width),
+            closeButton.heightAnchor.constraint(equalTo: closeButton.widthAnchor),
+            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: appCardViewTopConstant),
+            appCardView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             appCardView.leadingAnchor.constraint(equalTo: leadingAnchor),
             appCardView.trailingAnchor.constraint(equalTo: trailingAnchor),
             appCardView.heightAnchor.constraint(equalToConstant: Constants.APP_CARD_EXPANDED_HEIGHT),
@@ -90,12 +164,7 @@ extension DetailView {
             textLabel.topAnchor.constraint(equalTo: appCardView.bottomAnchor, constant: 40),
             textLabel.leadingAnchor.constraint(equalTo: appCardView.leadingAnchor, constant: 20),
             textLabel.trailingAnchor.constraint(equalTo: appCardView.trailingAnchor, constant: -20),
-            textLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
-            
-            closeButton.widthAnchor.constraint(equalToConstant: Constants.APP_CARD_CLOSE_BUTTON_SIZE.width),
-            closeButton.heightAnchor.constraint(equalTo: closeButton.widthAnchor),
-            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            textLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -textLabelBottomConstant),
         ])
     }
 }

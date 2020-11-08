@@ -104,7 +104,7 @@ extension DetailVC: UIScrollViewDelegate {
         if scrollView.isTracking {
             scrollView.bounces = true
         } else {
-            scrollView.bounces = yOffset >= 0
+            scrollView.bounces = yOffset > Constants.APP_CARD_EXPANDED_HEIGHT
         }
         
         changeCloseButtonAppearance(basedOn: yOffset)
@@ -149,5 +149,9 @@ extension DetailVC: UIScrollViewDelegate {
                 animator.startAnimation()
             }
         }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollView.bounces = true
     }
 }

@@ -89,16 +89,22 @@ class DetailView: UIView {
         guard isSnapshotNeeded else { return }
         
         isSnapshotNeeded = !isSnapshotNeeded
+        
+        // Hides close button and scroll indicator before taking snapshot, also make sure scroll offset is 0 (top of the scroll)
         closeButton.isHidden = true
         scrollView.showsVerticalScrollIndicator = false
         scrollView.contentOffset.y = 0
+        
         let snapshotImage = createSnapshot()
-        scrollView.showsVerticalScrollIndicator = true
+        
+        // Unhides close button and scroll indicator
         closeButton.isHidden = false
+        scrollView.showsVerticalScrollIndicator = true
         
         snapshotImageView.image = snapshotImage
         snapshotImageView.frame = self.bounds
         
+        // Need to create a close button copy and add it to the snapshot's subview so we can animate the close button copy alpha
         closeButtonCopy = closeButton.createCopy()
         snapshotImageView.addSubview(closeButtonCopy!)
         

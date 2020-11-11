@@ -28,6 +28,7 @@ struct AppCard: Decodable {
 }
 
 extension AppCard {
+    
     /// Returns an array of AppCard data loaded from a local .json file.
     static func getAppCards() -> [AppCard] {
         let appData = fetchFromJSON(ofType: AppCard.self, fileName: "app-data")

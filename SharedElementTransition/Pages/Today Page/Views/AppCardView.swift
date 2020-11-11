@@ -14,6 +14,7 @@ protocol AppCardViewDelegate: AnyObject {
 enum AppCardState {
     case card
     case expanded
+    case pulled(leading: CGFloat, trailing: CGFloat)
 }
 
 class AppCardView: UIView {
@@ -214,6 +215,9 @@ class AppCardView: UIView {
             containerView.layer.cornerRadius = 0
 
             shadowView.hideAllShadows()
+        case .pulled(let leading, let trailing):
+            leadingConstraint?.constant = leading.rounded()
+            trailingConstraint?.constant = trailing.rounded()
         }
     }
     

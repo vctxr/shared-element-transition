@@ -30,7 +30,7 @@ class DetailVC: UIViewController, StatusBarAnimation {
         return detailView
     }()
          
-    private var isDismissing: Bool = false
+    private var isPullingToDismiss: Bool = false
     
     private let appCardView: AppCardView
     private let appCard: AppCard
@@ -77,7 +77,10 @@ class DetailVC: UIViewController, StatusBarAnimation {
     
     // MARK: - Helper Functions
     func changeCloseButtonAppearance(basedOn yOffset: CGFloat) {
-        if yOffset < Constants.APP_CARD_EXPANDED_HEIGHT - (Constants.APP_CARD_CLOSE_BUTTON_SIZE.height / 2) - 20 {
+        // The treshold where the close button crosses from app card image to background color
+        let tresholdOffset = Constants.APP_CARD_EXPANDED_HEIGHT - (Constants.APP_CARD_CLOSE_BUTTON_SIZE.height / 2) - 20
+        
+        if yOffset < tresholdOffset {
             switch appCard.backgroundAppearance.top {
             case .light:
                 detailView.closeButton.animateAppearanceIfNeeded(for: .dark)
@@ -100,7 +103,7 @@ extension DetailVC: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // The initial top y offset is 0.0
         let yOffset = scrollView.contentOffset.y
-        
+
         if scrollView.isTracking {
             scrollView.bounces = true
         } else {
@@ -112,32 +115,37 @@ extension DetailVC: UIScrollViewDelegate {
         if yOffset < 0 && scrollView.isTracking {
             detailView.createSnapshotOfViewIfNeeded()
             
-            isDismissing = true
+            isPullingToDismiss = true
             detailView.isSnapshotShowing = true
             
-            // Scale ranging from 1 to 0.85 at yOffset = -65
-            let scale = 1 - (yOffset / -65 ) * 0.15
-
-            // Corner radius ranging from 0 to 10 at yOffset = -65
-            let cornerRadius = Constants.APP_CARD_CORNER_RADIUS - ((yOffset + 65) / 65) * Constants.APP_CARD_CORNER_RADIUS
+            let dismissTreshold = Constants.DISMISS_TRESHOLD
+            let minScale = Constants.MIN_SCALE
+            let maxCornerRadius = Constants.APP_CARD_CORNER_RADIUS
+            let maxCloseButtonAlpha = Constants.APP_CARD_CLOSE_BUTTON_ALPHA
             
-            // Close button alpha ranging from 0.9 to 0 at yOffset = -65
-            let alpha = Constants.APP_CARD_CLOSE_BUTTON_ALPHA - (yOffset / -65) * Constants.APP_CARD_CLOSE_BUTTON_ALPHA
+            // Scale ranging from 1 to 0.85 at yOffset = -100
+            let scale = 1 - (yOffset / -dismissTreshold ) * (1 - minScale)
+
+            // Corner radius ranging from 0 to 10 at yOffset = -100
+            let cornerRadius = maxCornerRadius - ((yOffset + dismissTreshold) / dismissTreshold) * maxCornerRadius
+            
+            // Close button alpha ranging from 0.9 to 0 at yOffset = -100
+            let alpha = maxCloseButtonAlpha - (yOffset / -dismissTreshold) * maxCloseButtonAlpha
             
             detailView.snapshotImageView.transform = CGAffineTransform(scaleX: scale, y: scale)
             detailView.snapshotImageView.layer.cornerRadius = cornerRadius
+            detailView.closeButtonCopy?.alpha = alpha
             
-            if let closeButtonCopy = detailView.closeButtonCopy {
-                closeButtonCopy.alpha = alpha
-            }
-            
-            if yOffset <= -65 {
+            if yOffset <= -dismissTreshold {
+                isPullingToDismiss = false
                 didTapCloseButton()
             }
         } else {
-            if isDismissing {
-                isDismissing = false
+            if isPullingToDismiss {
+                isPullingToDismiss = false
+                
                 scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+                scrollView.bounces = true
 
                 let animator = UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
                     self.detailView.snapshotImageView.transform = .identity

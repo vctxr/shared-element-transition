@@ -90,17 +90,47 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
             return
         }
         
+        // Detail view's snapshot if any (.zero if there is none setup)
+        let snapshotFrame = detailVC.detailView.snapshotImageView.frame
+        let yOrigin = snapshotFrame.origin.y
+        let xOrigin = snapshotFrame.origin.x
+        
         // Create a copy of the selected app card view with the same frame as the copied app card view
         let appCardViewCopy = createAppCardViewCopy(appCardView: appCardView, withModel: appCard)
         let absoluteAppCardViewFrame = appCardView.convert(appCardView.frame, to: nil)
-        appCardViewCopy.frame = (transition == .present) ? absoluteAppCardViewFrame :
-                                                           CGRect(x: 0, y: 0, width: appCardView.frame.width, height: Constants.APP_CARD_EXPANDED_HEIGHT)
+        
+        if transition == .present {
+            appCardViewCopy.frame = absoluteAppCardViewFrame
+        } else {
+            if snapshotFrame == .zero {
+                // Default (0, 0) full frame
+                appCardViewCopy.frame = CGRect(x: 0, y: 0, width: appCardView.frame.width, height: Constants.APP_CARD_EXPANDED_HEIGHT)
+            } else {
+                // Shrinked frame because of pull to dismiss animation, so need to adjust corner radius and layout
+                appCardViewCopy.frame = CGRect(x: 0, y: yOrigin, width: appCardView.frame.width, height: Constants.APP_CARD_EXPANDED_HEIGHT * Constants.MIN_SCALE)
+                appCardViewCopy.updateLayout(for: .pulled(leading: xOrigin, trailing: -xOrigin))
+            }
+        }
+        
         appCardViewCopy.layoutIfNeeded()
         containerView.addSubview(appCardViewCopy)
          
-        // Initial expanding bottom background view setup. If dismiss, inset top frame by app card view height to hide the background view sticking up at the top of the app card while dismissing
-        expandingBottomBackgroundView.frame = (transition == .present) ? appCardViewCopy.containerView.frame : containerView.frame
+        // Initial expanding bottom background view setup.
         expandingBottomBackgroundView.layer.cornerRadius = transition.cornerRadius
+
+        if transition == .present {
+            expandingBottomBackgroundView.frame = appCardViewCopy.containerView.frame
+        } else {
+            if snapshotFrame == .zero {
+                // Full frame
+                expandingBottomBackgroundView.frame = containerView.frame
+            } else {
+                // Inset bottom frame
+                expandingBottomBackgroundView.frame = snapshotFrame.insetBy(dx: 0, dy: 100)
+                expandingBottomBackgroundView.layer.cornerRadius = 10
+            }
+        }
+
         expandingBottomBackgroundView.backgroundColor = .systemBackground
         appCardViewCopy.insertSubview(expandingBottomBackgroundView, aboveSubview: appCardViewCopy.shadowView)
 

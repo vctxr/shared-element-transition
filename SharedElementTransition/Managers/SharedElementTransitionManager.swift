@@ -36,9 +36,10 @@ class SharedElementTransitionManager: NSObject {
     private lazy var expandingBottomBackgroundView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
+        view.backgroundColor = .secondarySystemGroupedBackground
         return view
     }()
-    
+            
     // MARK: - Helper Functions
     private func addBackgroundViews(to containerView: UIView) {
         blurEffectView.frame = containerView.bounds
@@ -93,7 +94,6 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         // Detail view's snapshot if any (.zero if there is none setup)
         let snapshotFrame = detailVC.detailView.snapshotImageView.frame
         let yOrigin = snapshotFrame.origin.y
-        let xOrigin = snapshotFrame.origin.x
         
         // Create a copy of the selected app card view with the same frame as the copied app card view
         let appCardViewCopy = createAppCardViewCopy(appCardView: appCardView, withModel: appCard)
@@ -106,9 +106,10 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
                 // Default (0, 0) full frame
                 appCardViewCopy.frame = CGRect(x: 0, y: 0, width: appCardView.frame.width, height: Constants.APP_CARD_EXPANDED_HEIGHT)
             } else {
+                let shrinkScale = Constants.MIN_SCALE
                 // Shrinked frame because of pull to dismiss animation, so need to adjust corner radius and layout
-                appCardViewCopy.frame = CGRect(x: 0, y: yOrigin, width: appCardView.frame.width, height: Constants.APP_CARD_EXPANDED_HEIGHT * Constants.MIN_SCALE)
-                appCardViewCopy.updateLayout(for: .pulled(leading: xOrigin, trailing: -xOrigin))
+                appCardViewCopy.frame = CGRect(x: 0, y: (yOrigin * (shrinkScale / 2)).rounded(), width: appCardView.frame.width, height: Constants.APP_CARD_EXPANDED_HEIGHT)
+                appCardViewCopy.transform = CGAffineTransform(scaleX: shrinkScale, y: shrinkScale)
             }
         }
         
@@ -126,27 +127,28 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
                 expandingBottomBackgroundView.frame = containerView.frame
             } else {
                 // Inset bottom frame
-                expandingBottomBackgroundView.frame = snapshotFrame.insetBy(dx: 0, dy: 100)
+                expandingBottomBackgroundView.frame = containerView.frame
                 expandingBottomBackgroundView.layer.cornerRadius = 10
             }
         }
 
-        expandingBottomBackgroundView.backgroundColor = .systemBackground
         appCardViewCopy.insertSubview(expandingBottomBackgroundView, aboveSubview: appCardViewCopy.shadowView)
 
         // Initial tab bar copy setup
         let hiddenTabBarFrame = originalTabBarFrame.offsetBy(dx: 0, dy: 100)
         tabBarCopy.frame = (transition == .present) ? originalTabBarFrame : hiddenTabBarFrame
         containerView.addSubview(tabBarCopy)
-        containerView.layoutIfNeeded()
         
         // Lay out text label copy
+        expandingBottomBackgroundView.layoutIfNeeded()
+        textLabelCopy.isHidden = false
         expandingBottomBackgroundView.addSubview(textLabelCopy)
         NSLayoutConstraint.activate([
-            textLabelCopy.topAnchor.constraint(equalTo: appCardViewCopy.bottomAnchor, constant: 40),
-            textLabelCopy.leadingAnchor.constraint(equalTo: appCardViewCopy.leadingAnchor, constant: 20),
-            textLabelCopy.trailingAnchor.constraint(equalTo: appCardViewCopy.trailingAnchor, constant: -20)
+            textLabelCopy.topAnchor.constraint(equalTo: appCardViewCopy.containerView.bottomAnchor, constant: 40),
+            textLabelCopy.leadingAnchor.constraint(equalTo: expandingBottomBackgroundView.leadingAnchor, constant: 20),
+            textLabelCopy.trailingAnchor.constraint(equalTo: expandingBottomBackgroundView.trailingAnchor, constant: -20)
         ])
+        
         containerView.layoutIfNeeded()
         
         // Lay out close button copy
@@ -171,7 +173,6 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
             startTransition(appCardView: appCardViewCopy, tabBar: tabBarCopy, closeButton: closeButtonCopy, containerView: containerView, yAppCardTarget: 0, yTabBarTarget: hiddenTabBarFrame.origin.y) {
                 detailVC.view.isHidden = false
                 appCardView.isHidden = false
-                tabBarController.tabBar.alpha = 1
 
                 appCardViewCopy.removeFromSuperview()
                 textLabelCopy.removeFromSuperview()
@@ -189,7 +190,7 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
                 textLabelCopy.removeFromSuperview()
                 closeButtonCopy.removeFromSuperview()
                 self.expandingBottomBackgroundView.removeFromSuperview()
-                
+
                 transitionContext.completeTransition(true)
             }
         }
@@ -238,8 +239,7 @@ extension SharedElementTransitionManager {
             // Set expanding bottom background view target state
             self.expandingBottomBackgroundView.frame = (self.transition == .present) ? containerView.frame : appCardView.containerView.frame
             self.expandingBottomBackgroundView.layer.cornerRadius = self.transition.next.cornerRadius
-            self.expandingBottomBackgroundView.backgroundColor = self.transition.expandingBottomBackgroundViewColor
-
+            
             // Set blur and backdrop view target state
             self.blurEffectView.alpha = self.transition.blurAlpha
             self.backdropView.alpha = self.transition.backdropAlpha
@@ -248,6 +248,7 @@ extension SharedElementTransitionManager {
             
             // Set tab bar copy target state
             tabBar.frame.origin.y = yOriginTabBar
+            tabBar.alpha = self.transition.tabBarAlpha
         }
         
         return [springAnimator, nonSpringAnimator]
@@ -284,11 +285,11 @@ extension SharedElementTransitionManager {
         
         var blurAlpha: CGFloat { return self == .present ? 1 : 0 }
         var backdropAlpha: CGFloat { return self == .present ? 0.2 : 0 }
+        var tabBarAlpha: CGFloat { return self == .present ? 0 : 1 }
         var closeButtonAlpha: CGFloat { return self == .present ? Constants.APP_CARD_CLOSE_BUTTON_ALPHA : 0 }
         var cornerRadius: CGFloat { return self == .present ? Constants.APP_CARD_CORNER_RADIUS : 0 }
         var appCardState: AppCardState { return self == .present ? .expanded : .card }
         var appCardHeight: CGFloat { return self == .present ? Constants.APP_CARD_EXPANDED_HEIGHT : Constants.APP_CARD_HEIGHT }
-        var expandingBottomBackgroundViewColor: UIColor { return self == .present ? .secondarySystemGroupedBackground : .clear }
         var next: TransitionType { return self == .present ? .dismiss : .present }
     }
 }

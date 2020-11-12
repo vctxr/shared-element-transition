@@ -64,7 +64,7 @@ class DetailView: UIView {
         self.appCardView = appCardView
         self.textLabel.text = appCardView.appCard.longDescription
         self.textLabel.applyLeadingBoldAttribute(separatedBy: "*")
-        self.textLabel.applyLineSpacing(lineSpacing: 2)
+        self.textLabel.applyLineSpacing(lineSpacing: 3)
 
         super.init(frame: .zero)
         

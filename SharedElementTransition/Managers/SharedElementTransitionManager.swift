@@ -140,7 +140,6 @@ extension SharedElementTransitionManager: UIViewControllerAnimatedTransitioning 
         containerView.addSubview(tabBarCopy)
         
         // Lay out text label copy
-        expandingBottomBackgroundView.layoutIfNeeded()
         textLabelCopy.isHidden = false
         expandingBottomBackgroundView.addSubview(textLabelCopy)
         NSLayoutConstraint.activate([

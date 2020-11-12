@@ -103,11 +103,15 @@ extension DetailVC: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // The initial top y offset is 0.0
         let yOffset = scrollView.contentOffset.y
-
-        if scrollView.isTracking {
-            scrollView.bounces = true
+        let yTranslation = scrollView.panGestureRecognizer.translation(in: view).y
+        
+        scrollView.showsVerticalScrollIndicator = yOffset <= 1 ? false : true
+        
+        // If going up and not tracking (no touch) then disable bounce, otherwise enable bounce
+        if yTranslation > 0 && !scrollView.isTracking {
+            scrollView.bounces = false
         } else {
-            scrollView.bounces = yOffset > Constants.APP_CARD_EXPANDED_HEIGHT
+            scrollView.bounces = true
         }
         
         changeCloseButtonAppearance(basedOn: yOffset)

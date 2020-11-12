@@ -34,4 +34,29 @@ extension UILabel {
         
         self.attributedText = attributedString
     }
+    
+    /// Applies a leading bold attribute to the label's text
+    /// - Parameter string: String representing the delimiter of the bold text
+    func applyLeadingBoldAttribute(separatedBy string: String) {
+        guard let separatedText = self.text?.components(separatedBy: string),
+              let font = self.font,
+              separatedText.count >= 2 else { return }
+        
+        let cleanedText = "\(separatedText[0])\(separatedText[1])"
+        
+        let regularAttributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.secondaryLabel
+        ]
+        let attributedString = NSMutableAttributedString(string: cleanedText, attributes: regularAttributes)
+        
+        let boldFontAttribute: [NSAttributedString.Key: Any] = [
+            .font: UIFont.boldSystemFont(ofSize: font.pointSize),
+            .foregroundColor: UIColor.label
+        ]
+        let range = (cleanedText as NSString).range(of: separatedText[0])
+        attributedString.addAttributes(boldFontAttribute, range: range)
+        
+        self.attributedText = attributedString
+    }
 }

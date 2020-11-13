@@ -121,10 +121,11 @@ extension TodayVC: AppCardViewDelegate {
 // MARK: - TabBarController Delegate
 extension TodayVC: UITabBarControllerDelegate {
     
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        if viewController == self {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if tabBarController.selectedIndex == 0 && viewController == self {
             todayView.collectionView.setContentOffset(CGPoint(x: 0, y: topScrollOffset), animated: true)
         }
+        return true
     }
 }
 

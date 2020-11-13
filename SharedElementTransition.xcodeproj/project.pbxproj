@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		570E605A254F97B7008FA1C1 /* AppCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570E6059254F97B7008FA1C1 /* AppCardView.swift */; };
+		570EE434255EAFA300CFDD0A /* GamesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE433255EAFA300CFDD0A /* GamesVC.swift */; };
+		570EE43A255EAFBE00CFDD0A /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE439255EAFBE00CFDD0A /* SearchVC.swift */; };
+		570EE43E255EAFC600CFDD0A /* ArcadeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE43D255EAFC600CFDD0A /* ArcadeVC.swift */; };
+		570EE441255EAFCE00CFDD0A /* AppsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE440255EAFCE00CFDD0A /* AppsVC.swift */; };
 		571F7B7C254FAB78001F9692 /* SharedElementTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 571F7B7B254FAB78001F9692 /* SharedElementTransitionManager.swift */; };
 		571F7B80254FE669001F9692 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 571F7B7F254FE669001F9692 /* UIView+Extensions.swift */; };
 		57253A0D254ECAFE004BFCFA /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57253A0C254ECAFE004BFCFA /* TodayView.swift */; };
@@ -36,6 +40,10 @@
 
 /* Begin PBXFileReference section */
 		570E6059254F97B7008FA1C1 /* AppCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCardView.swift; sourceTree = "<group>"; };
+		570EE433255EAFA300CFDD0A /* GamesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesVC.swift; sourceTree = "<group>"; };
+		570EE439255EAFBE00CFDD0A /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
+		570EE43D255EAFC600CFDD0A /* ArcadeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcadeVC.swift; sourceTree = "<group>"; };
+		570EE440255EAFCE00CFDD0A /* AppsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsVC.swift; sourceTree = "<group>"; };
 		571F7B7B254FAB78001F9692 /* SharedElementTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedElementTransitionManager.swift; sourceTree = "<group>"; };
 		571F7B7F254FE669001F9692 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		57253A0C254ECAFE004BFCFA /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
@@ -83,6 +91,79 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		570EE42D255EAEF200CFDD0A /* Apps Tab */ = {
+			isa = PBXGroup;
+			children = (
+				570EE436255EAFA800CFDD0A /* Apps Page */,
+			);
+			path = "Apps Tab";
+			sourceTree = "<group>";
+		};
+		570EE42E255EAEF800CFDD0A /* Games Tab */ = {
+			isa = PBXGroup;
+			children = (
+				570EE432255EAF9200CFDD0A /* Games Page */,
+			);
+			path = "Games Tab";
+			sourceTree = "<group>";
+		};
+		570EE42F255EAF0100CFDD0A /* Arcade Tab */ = {
+			isa = PBXGroup;
+			children = (
+				570EE437255EAFAC00CFDD0A /* Arcade Page */,
+			);
+			path = "Arcade Tab";
+			sourceTree = "<group>";
+		};
+		570EE430255EAF0700CFDD0A /* Search Tab */ = {
+			isa = PBXGroup;
+			children = (
+				570EE438255EAFB200CFDD0A /* Search Page */,
+			);
+			path = "Search Tab";
+			sourceTree = "<group>";
+		};
+		570EE431255EAF6300CFDD0A /* Today Tab */ = {
+			isa = PBXGroup;
+			children = (
+				57253A11254ECB8D004BFCFA /* Today Page */,
+				57BE9A79254F316400CA0F53 /* Detail Page */,
+			);
+			path = "Today Tab";
+			sourceTree = "<group>";
+		};
+		570EE432255EAF9200CFDD0A /* Games Page */ = {
+			isa = PBXGroup;
+			children = (
+				570EE433255EAFA300CFDD0A /* GamesVC.swift */,
+			);
+			path = "Games Page";
+			sourceTree = "<group>";
+		};
+		570EE436255EAFA800CFDD0A /* Apps Page */ = {
+			isa = PBXGroup;
+			children = (
+				570EE440255EAFCE00CFDD0A /* AppsVC.swift */,
+			);
+			path = "Apps Page";
+			sourceTree = "<group>";
+		};
+		570EE437255EAFAC00CFDD0A /* Arcade Page */ = {
+			isa = PBXGroup;
+			children = (
+				570EE43D255EAFC600CFDD0A /* ArcadeVC.swift */,
+			);
+			path = "Arcade Page";
+			sourceTree = "<group>";
+		};
+		570EE438255EAFB200CFDD0A /* Search Page */ = {
+			isa = PBXGroup;
+			children = (
+				570EE439255EAFBE00CFDD0A /* SearchVC.swift */,
+			);
+			path = "Search Page";
+			sourceTree = "<group>";
+		};
 		571F7B7A254FAB61001F9692 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,8 +203,11 @@
 		572EAD2A254F2A660040BDA3 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
-				57253A11254ECB8D004BFCFA /* Today Page */,
-				57BE9A79254F316400CA0F53 /* Detail Page */,
+				570EE431255EAF6300CFDD0A /* Today Tab */,
+				570EE42E255EAEF800CFDD0A /* Games Tab */,
+				570EE42D255EAEF200CFDD0A /* Apps Tab */,
+				570EE42F255EAF0100CFDD0A /* Arcade Tab */,
+				570EE430255EAF0700CFDD0A /* Search Tab */,
 			);
 			path = Pages;
 			sourceTree = "<group>";
@@ -290,8 +374,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				570EE43A255EAFBE00CFDD0A /* SearchVC.swift in Sources */,
 				57CF7502254EC5D6000C1C41 /* TodayVC.swift in Sources */,
+				570EE434255EAFA300CFDD0A /* GamesVC.swift in Sources */,
 				572EAD27254F23250040BDA3 /* Date+Extensions.swift in Sources */,
+				570EE43E255EAFC600CFDD0A /* ArcadeVC.swift in Sources */,
 				57BE9A7B254F319F00CA0F53 /* DetailVC.swift in Sources */,
 				57BE9A7E254F31B800CA0F53 /* DetailView.swift in Sources */,
 				57D8183B2557FE1100952F4B /* UIColor+Extensions.swift in Sources */,
@@ -307,6 +394,7 @@
 				57CF74FE254EC5D6000C1C41 /* AppDelegate.swift in Sources */,
 				57CF7500254EC5D6000C1C41 /* SceneDelegate.swift in Sources */,
 				572EAD24254F0A1C0040BDA3 /* UILabel+Extensions.swift in Sources */,
+				570EE441255EAFCE00CFDD0A /* AppsVC.swift in Sources */,
 				57A66B13254ED990008CB9B8 /* UIFont+Extensions.swift in Sources */,
 				57A66B0F254ED56C008CB9B8 /* TodayHeaderCollectionReusableView.swift in Sources */,
 				572EAD1F254EE1470040BDA3 /* HelperFunctions.swift in Sources */,

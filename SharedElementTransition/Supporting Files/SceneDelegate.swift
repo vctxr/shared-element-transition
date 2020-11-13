@@ -19,11 +19,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let todayVC = TodayVC()
-        todayVC.tabBarItem = UITabBarItem(title: "Today", image: UIImage(systemName: "rectangle.dock"), tag: 0)
+        todayVC.tabBarItem = UITabBarItem(title: "Today", image: UIImage(named: "today"), tag: 0)
         
+        let gamesVC = GamesVC()
+        gamesVC.tabBarItem = UITabBarItem(title: "Games", image: UIImage(named: "games"), tag: 1)
+        let gamesNC = UINavigationController(rootViewController: gamesVC)
+        gamesNC.navigationBar.prefersLargeTitles = true
+        
+        let appsVC = AppsVC()
+        appsVC.tabBarItem = UITabBarItem(title: "Apps", image: UIImage(named: "apps"), tag: 2)
+        let appsNC = UINavigationController(rootViewController: appsVC)
+        appsNC.navigationBar.prefersLargeTitles = true
+
+        let arcadeVC = ArcadeVC()
+        arcadeVC.tabBarItem = UITabBarItem(title: "Arcade", image: UIImage(named: "arcade"), tag: 3)
+        let arcadeNC = UINavigationController(rootViewController: arcadeVC)
+        arcadeNC.navigationBar.prefersLargeTitles = true
+
+        let searchVC = SearchVC()
+        searchVC.tabBarItem = UITabBarItem(title: "Search", image: UIImage(named: "search"), tag: 4)
+        let searchNC = UINavigationController(rootViewController: searchVC)
+        searchNC.navigationBar.prefersLargeTitles = true
+
         let tabBar = UITabBarController()
-        tabBar.setViewControllers([todayVC], animated: false)
-        
+        tabBar.setViewControllers([todayVC, gamesNC, appsNC, arcadeNC, searchNC,], animated: false)
         
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = tabBar

@@ -29,6 +29,11 @@ class TodayVC: UIViewController {
     private lazy var safeAreaTopInset: CGFloat = {
         return UIDevice.current.safeAreaTopHeight
     }()
+    
+    private lazy var topScrollOffset = {
+        // The initial top y offset is -(safe area top inset - 20) (because issue in notchless iphones)
+        return -(safeAreaTopInset - 20)
+    }()
             
     private let sharedElementTransitionManager = SharedElementTransitionManager()
     private let appCards: [AppCard] = AppCard.getAppCards()
@@ -37,6 +42,7 @@ class TodayVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = todayView
+        tabBarController?.delegate = self
     }
     
     // MARK: - Functions
@@ -88,10 +94,7 @@ extension TodayVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSourc
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOffset = scrollView.contentOffset.y
-        
-        // The initial top y offset is -(safe area top inset - 20) (because issue in notchless iphones)
-        let topScrollOffset = -(safeAreaTopInset - 20)
-        
+                
         if yOffset <= topScrollOffset + 12 {
             let alpha = 1 + ((yOffset - (topScrollOffset + 12)) / 12 ) * 1
             todayView.statusBarBlurView.alpha = max(0, alpha)
@@ -111,6 +114,17 @@ extension TodayVC: AppCardViewDelegate {
         detailVC.transitioningDelegate = sharedElementTransitionManager
         detailVC.modalPresentationStyle = .overCurrentContext
         present(detailVC, animated: true, completion: nil)
+    }
+}
+
+
+// MARK: - TabBarController Delegate
+extension TodayVC: UITabBarControllerDelegate {
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if viewController == self {
+            todayView.collectionView.setContentOffset(CGPoint(x: 0, y: topScrollOffset), animated: true)
+        }
     }
 }
 

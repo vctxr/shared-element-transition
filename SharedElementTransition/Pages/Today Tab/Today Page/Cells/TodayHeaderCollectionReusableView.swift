@@ -96,7 +96,7 @@ extension TodayHeaderCollectionReusableView {
             profileImageView.widthAnchor.constraint(equalToConstant: 40),
             profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor),
 
-            verticalStackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            verticalStackView.topAnchor.constraint(equalTo: topAnchor, constant: 26),
             verticalStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             verticalStackTrailingConstraint,
             verticalStackBottomConstraint

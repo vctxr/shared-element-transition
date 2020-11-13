@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DetailVC: UIViewController, StatusBarAnimation {
+class DetailVC: UIViewController, AnimatableStatusBar {
     
     // MARK: - Status Bar Animation
     var statusBarShouldBeHidden: Bool = false

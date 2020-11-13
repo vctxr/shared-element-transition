@@ -13,7 +13,6 @@ class AppCardCollectionCell: UICollectionViewCell {
     
     let appCardView = AppCardView()
     
-    
     // MARK: - Inits
     override init(frame: CGRect) {
         super.init(frame: frame)

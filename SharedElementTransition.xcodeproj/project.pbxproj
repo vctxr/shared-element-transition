@@ -17,7 +17,7 @@
 		572EAD24254F0A1C0040BDA3 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572EAD23254F0A1C0040BDA3 /* UILabel+Extensions.swift */; };
 		572EAD27254F23250040BDA3 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572EAD26254F23250040BDA3 /* Date+Extensions.swift */; };
 		5796F6B52556B737006C34DE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5796F6B42556B737006C34DE /* Constants.swift */; };
-		5796F6B925573230006C34DE /* StatusBarAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5796F6B825573230006C34DE /* StatusBarAnimation.swift */; };
+		5796F6B925573230006C34DE /* AnimatableStatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5796F6B825573230006C34DE /* AnimatableStatusBar.swift */; };
 		57A66B0F254ED56C008CB9B8 /* TodayHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A66B0E254ED56C008CB9B8 /* TodayHeaderCollectionReusableView.swift */; };
 		57A66B13254ED990008CB9B8 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A66B12254ED990008CB9B8 /* UIFont+Extensions.swift */; };
 		57A66B1A254EDE2D008CB9B8 /* AppCardCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A66B19254EDE2D008CB9B8 /* AppCardCollectionCell.swift */; };
@@ -45,7 +45,7 @@
 		572EAD23254F0A1C0040BDA3 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		572EAD26254F23250040BDA3 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		5796F6B42556B737006C34DE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		5796F6B825573230006C34DE /* StatusBarAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarAnimation.swift; sourceTree = "<group>"; };
+		5796F6B825573230006C34DE /* AnimatableStatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatableStatusBar.swift; sourceTree = "<group>"; };
 		57A66B0E254ED56C008CB9B8 /* TodayHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		57A66B12254ED990008CB9B8 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		57A66B19254EDE2D008CB9B8 /* AppCardCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCardCollectionCell.swift; sourceTree = "<group>"; };
@@ -143,7 +143,7 @@
 		5796F6B725573217006C34DE /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				5796F6B825573230006C34DE /* StatusBarAnimation.swift */,
+				5796F6B825573230006C34DE /* AnimatableStatusBar.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -200,12 +200,12 @@
 		57CF74FC254EC5D6000C1C41 /* SharedElementTransition */ = {
 			isa = PBXGroup;
 			children = (
-				5796F6B725573217006C34DE /* Protocols */,
+				572EAD1D254EE13C0040BDA3 /* Utilities */,
 				571F7B7A254FAB61001F9692 /* Managers */,
-				57A66B11254ED984008CB9B8 /* Extensions */,
 				572EAD15254EDEDA0040BDA3 /* Models */,
 				572EAD2A254F2A660040BDA3 /* Pages */,
-				572EAD1D254EE13C0040BDA3 /* Utilities */,
+				5796F6B725573217006C34DE /* Protocols */,
+				57A66B11254ED984008CB9B8 /* Extensions */,
 				573F8C33254EC91F00C821E6 /* Supporting Files */,
 				57CF750B254EC5D7000C1C41 /* Info.plist */,
 			);
@@ -298,7 +298,7 @@
 				57253A0D254ECAFE004BFCFA /* TodayView.swift in Sources */,
 				57D8183E2558034D00952F4B /* UIViewController+Extensions.swift in Sources */,
 				57A66B1A254EDE2D008CB9B8 /* AppCardCollectionCell.swift in Sources */,
-				5796F6B925573230006C34DE /* StatusBarAnimation.swift in Sources */,
+				5796F6B925573230006C34DE /* AnimatableStatusBar.swift in Sources */,
 				571F7B80254FE669001F9692 /* UIView+Extensions.swift in Sources */,
 				571F7B7C254FAB78001F9692 /* SharedElementTransitionManager.swift in Sources */,
 				572EAD17254EDEE90040BDA3 /* AppCard.swift in Sources */,

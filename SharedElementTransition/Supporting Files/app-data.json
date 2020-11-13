@@ -29,6 +29,20 @@
         "longDescription": "Greetings, adventurers!* The Season of Prophecy Trials await to test your resolve! Have you collected all Seasonal expressions or unlocked your favorite items?\n\nIn Sky, we arrive as the Children of the Light, spreading hope through the desolate kingdom to return fallen Stars to their constellations.\n\nIn the kingdom of Sky, you can...\n- Soar end explore 7 dreamlike realms to uncover the mystery\n- Encounter and socialize with like-minded players from around the world\n- Feel free to express yourself with a delightful selection of character customizations\n- Team up with others to adventure into darker realms, save spirits and uncover ancient treasures\n- Gift candles of light to share appreciation and grow friendships\n- Enjoy a unique musical experience and create harmonies together\n- Join an ever-expanding world with new upcoming attractions, including seasonal events and expansion of realms"
     },
     {
+        "type": "appOfTheDay",
+        "backgroundAppearance":
+        {
+            "top": "dark",
+            "bottom": "dark"
+        },
+        "largeTitle": "APP\nOF THE\nDAY",
+        "appName": "Kura",
+        "appIconName": "kura-icon",
+        "message": "Save the Environment",
+        "imageName": "kura",
+        "longDescription": "Hi it's me Kura!* Nice to meet you. Join me in my quest to clean my beloved home, the beach! You can start helping Kura just be simply doing your regular activities throughout the day. Everyday, Kura will send you notifications and ask you about your activities during the day and your answers will reflect the beach condition every 3 days.\n\nWe developed Kura to provide the most seamless and less intrusive experience for anyone to use and start making changes to help Kura save it's home and also the environment. With beautiful and gorgeous dynamic backgrounds that will change according to the time and also dynamic app icon which automatically reflect Kura's beach condition.\n\nStart helping Kura now and be the change for the environment even through small actions, because remember \"Your action matters\""
+    },
+    {
         "type": "highlight",
         "backgroundAppearance":
         {

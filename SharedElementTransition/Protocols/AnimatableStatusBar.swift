@@ -8,12 +8,12 @@
 import UIKit
 
 /// Properties and methods for animating status bar appearances.
-protocol StatusBarAnimation: AnyObject {
+protocol AnimatableStatusBar: AnyObject {
     var statusBarShouldBeHidden: Bool { get set }
     var statusBarAnimationStyle: UIStatusBarAnimation { get set }
 }
 
-extension StatusBarAnimation where Self: UIViewController {
+extension AnimatableStatusBar where Self: UIViewController {
     
     /// Animates the status bar appearance.
     /// - Parameters:

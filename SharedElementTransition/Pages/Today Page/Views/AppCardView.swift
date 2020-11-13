@@ -289,7 +289,7 @@ extension AppCardView {
         appOfTheDayLabel.applyLineSpacing(lineHeightMultiple: 0.75)
         
 
-        appOfTheDayLabel.textColor = appCard.backgroundAppearance.bottom == .light ? .black : .white
+        appOfTheDayLabel.textColor = appCard.backgroundAppearance.top == .light ? .black : .white
     }
     
     private func configureBottomCTA(with appCard: AppCard) {

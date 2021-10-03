@@ -148,17 +148,18 @@ extension DetailVC: UIScrollViewDelegate {
             if isPullingToDismiss {
                 isPullingToDismiss = false
                 
-                scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
-                scrollView.bounces = true
-
-                let animator = UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
-                    self.detailView.snapshotImageView.transform = .identity
+                if scrollView.contentOffset.y >= 0 {
+                    detailView.isSnapshotShowing = false
+                } else {
+                    let animator = UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
+                        self.detailView.snapshotImageView.transform = .identity
+                    }
+                    
+                    animator.addCompletion { (_) in
+                        self.detailView.isSnapshotShowing = false
+                    }
+                    animator.startAnimation()
                 }
-                
-                animator.addCompletion { (_) in
-                    self.detailView.isSnapshotShowing = false
-                }
-                animator.startAnimation()
             }
         }
     }
